@@ -7,14 +7,14 @@ export default function Navbar() {
         <h3 className="font-bold text-3xl italic text-white">
           <Link href="/">Don Grillado</Link>
         </h3>
-        <ul className="flex gap-x-4 text-lg font-bold text-white">
-          <li>
+        <ul className="flex gap-x-4 text-xl font-bold ">
+          <li className="text-gray-300 hover:text-gray-200">
             <Link href="/reservation">Reservas</Link>
           </li>
-          <li>
+          <li className="text-gray-300 hover:text-gray-200">
             <Link href="/menu">Menu</Link>
           </li>
-          <li>
+          <li className="text-gray-300 hover:text-gray-200">
             <Link href="/contact">Contacto</Link>
           </li>
         </ul>

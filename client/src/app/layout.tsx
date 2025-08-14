@@ -1,10 +1,10 @@
 import Navbar from "@/components/Navbar";
-import { Oswald } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 
-const oswald = Oswald({
+const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["400"], 
+  weight: ["400"],
 });
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={oswald.className}>
+      <body className={roboto.className}>
         <Navbar />
         {children}
       </body>
