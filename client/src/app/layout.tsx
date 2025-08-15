@@ -1,8 +1,8 @@
 import Navbar from "@/components/Navbar";
-import { Roboto } from "next/font/google";
+import { Rubik } from "next/font/google";
 import "./globals.css";
 
-const roboto = Roboto({
+const rubik = Rubik({
   subsets: ["latin"],
   weight: ["400"],
 });
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
+      <body className={rubik.className}>
         <Navbar />
         {children}
       </body>
