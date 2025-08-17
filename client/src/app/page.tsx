@@ -82,7 +82,7 @@ export default function Home() {
                 className="object-cover rounded-full shadow-lg"
               />
             </div>
-            <p className="mt-3 text-sm text-gray-700">Asado</p>
+            <p className="mt-6 text-2xl text-white">Asado</p>
           </div>
 
           {/* Item 2 */}
@@ -95,7 +95,7 @@ export default function Home() {
                 className="object-cover rounded-full shadow-lg"
               />
             </div>
-            <p className="mt-3 text-sm text-gray-700">Papas fritas</p>
+            <p className="mt-6 text-2xl text-white">Papas fritas</p>
           </div>
 
           {/* Item 3 */}
@@ -108,10 +108,10 @@ export default function Home() {
                 className="object-cover rounded-full shadow-lg"
               />
             </div>
-            <p className="mt-3 text-sm text-gray-700">Ensaladas</p>
+            <p className="mt-6 text-2xl text-white">Ensaladas</p>
           </div>
 
-          <div className="flex flex-col items-center text-center w-40">
+          <div className="flex flex-col items-center text-center w-40  ">
             <div className="w-65 h-65 relative">
               <Image
                 src="/empanadas.jpg"
@@ -120,7 +120,7 @@ export default function Home() {
                 className="object-cover rounded-full shadow-lg"
               />
             </div>
-            <p className="mt-3 text-sm text-gray-700">Empanadas</p>
+            <p className="mt-6 text-2xl text-white">Empanadas</p>
           </div>
         </div>
       </div>
