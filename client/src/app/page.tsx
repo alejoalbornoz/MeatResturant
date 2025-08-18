@@ -19,16 +19,18 @@ export default function Home() {
         />
 
         {/* Overlay negro con opacidad */}
-        <div className="absolute inset-0 bg-black/50 z-10"></div>
+        <div className="absolute inset-0 bg-black/40 z-10"></div>
+        {/* Difuminado */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-transparent z-10"></div>
 
         <div className="absolute inset-0 flex justify-center items-center z-20">
           <div className="flex flex-col items-center">
-            <Image src="/logo.png" alt="Logo" width={650} height={400} />
-            <div className="flex mt-6 gap-4">
-              <button className="w-50 px-6 py-3 border-2 border-white text-white font-bold rounded-md cursor-pointer hover:bg-white hover:text-black transition-all duration-300">
+            <Image src="/logodon3.png" alt="Logo" width={750} height={400} />
+            <div className="flex gap-4">
+              <button className="w-50 px-6 py-3 border-2 border-white text-white font-bold rounded-md cursor-pointer ">
                 Reservar Ahora
               </button>
-              <button className="w-50 px-6 py-3 border-2 border-white text-white font-bold rounded-md cursor-pointer hover:bg-orange-500 hover:border-orange-500 transition-all duration-300">
+              <button className="w-50 px-6 py-3 border-2  text-white font-bold rounded-md cursor-pointer bg-orange-500 border-orange-500 ">
                 Menú
               </button>
             </div>
@@ -38,18 +40,16 @@ export default function Home() {
       <div className="relative h-[150vh] ">
         <div className="container mx-75 mt-20 flex  ">
           <Image
-            src="/foto3.png"
+            src="/bifechorizo.jpg"
             alt="Asado Premium"
-            width={650}
+            width={800}
             height={400}
           />
-          <div className="ml-10 w-150">
-            {/* <IconMeat /> */}
-
+          <div className="ml-10 w-150 ">
             <h3
               className={`${caveat.className} text-orange-600 text-3xl mt-10`}
             >
-              Asado a la parrilla
+              Bife de Chorizo
             </h3>
 
             <h2 className="text-4xl font-bold uppercase text-white mb-5">
@@ -71,56 +71,61 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-50 mt-30">
+
+        <div className="flex flex-wrap justify-center gap-10 mt-30 ">
           {/* Item 1 */}
-          <div className="flex flex-col items-center text-center w-40">
-            <div className="w-65 h-65 relative">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 ">
+            <div className="w-100 h-70 relative">
               <Image
-                src="/asado.jpg" // Ruta de tu imagen en /public
+                src="/asado.jpg"
                 alt="Imagen 1"
                 fill
-                className="object-cover rounded-full shadow-lg"
+                className="object-cover  shadow-lg"
               />
             </div>
             <p className="mt-6 text-2xl text-white">Asado</p>
+            <p className="text-white mt-2">Lorem ipsum dolor sit amet</p>
           </div>
 
           {/* Item 2 */}
-          <div className="flex flex-col items-center text-center w-40">
-            <div className="w-65 h-65 relative">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950">
+            <div className="w-100 h-70 relative">
               <Image
                 src="/papasfritas.jpg"
                 alt="Imagen 2"
                 fill
-                className="object-cover rounded-full shadow-lg"
+                className="object-cover  shadow-lg"
               />
             </div>
             <p className="mt-6 text-2xl text-white">Papas fritas</p>
+            <p className="text-white mt-2">Lorem ipsum dolor</p>
           </div>
 
           {/* Item 3 */}
-          <div className="flex flex-col items-center text-center w-40">
-            <div className="w-65 h-65 relative">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950">
+            <div className="w-100 h-70 relative">
               <Image
                 src="/ensalada.jpg"
                 alt="Imagen 3"
                 fill
-                className="object-cover rounded-full shadow-lg"
+                className="object-cover  shadow-lg"
               />
             </div>
             <p className="mt-6 text-2xl text-white">Ensaladas</p>
+            <p  className="text-white mt-2">Lorem ipsum dolor sit</p>
           </div>
 
-          <div className="flex flex-col items-center text-center w-40  ">
-            <div className="w-65 h-65 relative">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950  ">
+            <div className="w-100 h-70 relative">
               <Image
                 src="/empanadas.jpg"
                 alt="Imagen 3"
                 fill
-                className="object-cover rounded-full shadow-lg"
+                className="object-cover  shadow-lg"
               />
             </div>
             <p className="mt-6 text-2xl text-white">Empanadas</p>
+            <p className="text-white mt-2">Disfruta de unas ricas empanadas fritas</p>
           </div>
         </div>
       </div>
