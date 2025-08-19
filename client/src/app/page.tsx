@@ -1,6 +1,7 @@
 import Image from "next/image";
-import IconMeat from "@/components/IconMeat";
+import IconMeat from "@/components/FlameIcon";
 import { Caveat } from "next/font/google";
+import FlameIcon from "@/components/FlameIcon";
 
 const caveat = Caveat({
   subsets: ["latin"],
@@ -37,13 +38,14 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="relative h-[150vh] ">
+      <div className="relative h-[170vh] ">
         <div className="container mx-75 mt-20 flex  ">
           <Image
             src="/bifechorizo.jpg"
             alt="Asado Premium"
             width={800}
             height={400}
+            className="rounded-4xl"
           />
           <div className="ml-10 w-150 ">
             <h3
@@ -74,7 +76,7 @@ export default function Home() {
 
         <div className="flex flex-wrap justify-center gap-10 mt-30 ">
           {/* Item 1 */}
-          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 ">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 rounded-4xl ">
             <div className="w-100 h-70 relative">
               <Image
                 src="/asado.jpg"
@@ -88,7 +90,7 @@ export default function Home() {
           </div>
 
           {/* Item 2 */}
-          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 rounded-4xl">
             <div className="w-100 h-70 relative">
               <Image
                 src="/papasfritas.jpg"
@@ -102,7 +104,7 @@ export default function Home() {
           </div>
 
           {/* Item 3 */}
-          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 rounded-4xl">
             <div className="w-100 h-70 relative">
               <Image
                 src="/ensalada.jpg"
@@ -112,10 +114,10 @@ export default function Home() {
               />
             </div>
             <p className="mt-6 text-2xl text-white">Ensaladas</p>
-            <p  className="text-white mt-2">Lorem ipsum dolor sit</p>
+            <p className="text-white mt-2">Lorem ipsum dolor sit</p>
           </div>
 
-          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950  ">
+          <div className="flex flex-col items-center text-center w-100 h-100 bg-neutral-950 rounded-4xl ">
             <div className="w-100 h-70 relative">
               <Image
                 src="/empanadas.jpg"
@@ -125,7 +127,37 @@ export default function Home() {
               />
             </div>
             <p className="mt-6 text-2xl text-white">Empanadas</p>
-            <p className="text-white mt-2">Disfruta de unas ricas empanadas fritas</p>
+            <p className="text-white mt-2">
+              Disfruta de unas ricas empanadas fritas
+            </p>
+          </div>
+        </div>
+
+        <div className="relative flex justify-center mt-30">
+          <Image
+            src="/parillacomida.jpg"
+            alt="Preparados para venir?"
+            className="object-cover rounded-4xl"
+            width={1000}
+            height={800}
+            priority
+          />
+
+          {/* Capa negra con opacidad */}
+          <div className="absolute inset-0 bg-black/40 rounded-4xl"></div>
+
+          {/* Texto encima de la imagen */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <h1 className="text-white text-4xl font-bold text-center">
+              ¿Estás preparado para visitarnos?
+            </h1>
+
+            <div>
+              <button className="flex flex-row bg-red-800 text-white  font-bold text-2xl p-5 mt-10 rounded-4xl cursor-pointer">
+                <FlameIcon />
+                <h3 className="ml-1">Reserva ahora!</h3>
+              </button>
+            </div>
           </div>
         </div>
       </div>
