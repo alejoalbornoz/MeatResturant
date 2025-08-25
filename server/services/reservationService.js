@@ -1,9 +1,9 @@
-import { generateCode } from "../utils/generateCode";
+import { generateCode } from "../utils/generateCode.js";
 import { PrismaClient } from "@prisma/client";
 
-const prisma = PrismaClient();
+const prisma = new PrismaClient();
 
-export default async function reservationService(data) {
+export async function createReservation(data) {
   const code = generateCode();
   const expiresAt = new Date(data.date);
   expiresAt.setDate(expiresAt.getDate() + 1);
@@ -17,7 +17,7 @@ export default async function reservationService(data) {
   });
 }
 
-export async function cancelReservation() {
+export async function cancelReservation(code) {
   const reservation = await prisma.reservation.findUnique({ where: { code } });
   if (!reservation) throw new Error("Reserva no encontrada");
 
