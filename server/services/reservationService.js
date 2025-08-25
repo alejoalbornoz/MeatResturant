@@ -33,10 +33,6 @@ export async function cancelReservation(code) {
   });
 }
 
-export async function getAllReservationsCode() {
-  return prisma.reservation.findMany();
-}
-
 export async function getReservationByCode(code) {
   return prisma.reservation.findUnique({ where: { code } });
 }
