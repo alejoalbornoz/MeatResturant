@@ -2,6 +2,7 @@ import {
   createReservation as createReservationService,
   cancelReservation as cancelReservationService,
   getReservationByCode,
+  getAllReservationsCode,
 } from "../services/reservationService.js";
 
 export async function createReservation(req, res) {
@@ -23,17 +24,14 @@ export async function cancelReservation(req, res) {
   }
 }
 
-
-// export async function getAllReservations(req, res){
-//   try {
-//     const { code }
-
-//   }
-
-
-// }
-
-
+export async function getAllReservations(req, res) {
+  try {
+    const reservations = await getAllReservationsCode();
+    res.json(reservations);
+  } catch (error) {
+    res.status(500).json({ message: "Error al cargar las reservas", error });
+  }
+}
 
 export async function getReservation(req, res) {
   try {
