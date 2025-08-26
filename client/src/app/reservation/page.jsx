@@ -1,80 +1,118 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-const Reservation = () => {
-  const [selectedMesa, setSelectedMesa] = useState(null);
-  const [showReservaInput, setShowReservaInput] = useState(false);
-  const [reservaCode, setReservaCode] = useState("");
+export default function Reserva() {
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
-
-  const [showForm, setShowForm] = useState(false);
+  const [mesas, setMesas] = useState([]);
+  const [ocupadas, setOcupadas] = useState([]);
+  const [selectedMesa, setSelectedMesa] = useState(null);
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
   const [telefono, setTelefono] = useState("");
+  const [reservaCode, setReservaCode] = useState("");
+  const [showReservaInput, setShowReservaInput] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  const mesas = Array.from({ length: 16 }, (_, i) => ({ id: i + 1 }));
+  // Fechas y horarios disponibles (podés traerlos del backend)
+  const availableDates = ["2025-08-26", "2025-08-27", "2025-08-28"];
+  const availableTimes = ["20:00", "21:00", "22:00"];
 
-  const disponibilidad = {
-    "2025-08-20": {
-      "11:30": [1, 3],
-      "12:00": [2, 5, 10],
-      "12:30": [],
-      "13:00": [7],
-    },
-    "2025-08-21": { "11:30": [1, 6, 8], "12:00": [3, 4], "12:30": [2] },
-    "2025-08-22": { "11:30": [5, 9], "12:00": [] },
-  };
+  const router = useRouter();
 
-  const getAvailableDates = () => {
-    const dates = [];
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-      const date = new Date(today);
-      date.setDate(today.getDate() + i);
-      dates.push(date.toISOString().split("T")[0]);
-    }
-    return dates;
-  };
+  // Simula las mesas fijas del restaurante
+  useEffect(() => {
+    setMesas(
+      Array.from({ length: 16 }, (_, i) => ({
+        id: i + 1,
+        nombre: `Mesa ${i + 1}`,
+      }))
+    );
+  }, []);
 
-  const getAvailableTimes = () => {
-    const times = [];
-    let hour = 11;
-    let minute = 30;
-    while (hour < 23 || (hour === 23 && minute === 0)) {
-      const h = hour.toString().padStart(2, "0");
-      const m = minute.toString().padStart(2, "0");
-      times.push(`${h}:${m}`);
-      minute += 30;
-      if (minute === 60) {
-        minute = 0;
-        hour++;
+  // Trae disponibilidad desde backend cuando cambian fecha u hora
+  useEffect(() => {
+    if (!fecha || !hora) return;
+
+    const fetchDisponibilidad = async () => {
+      try {
+        const res = await fetch(
+          `http://localhost:8080/api/reservation/availability?date=${fecha}&time=${hora}`
+        );
+        const data = await res.json();
+        setOcupadas(data.occupiedTables || []);
+      } catch (error) {
+        console.error("Error al obtener disponibilidad:", error);
       }
-    }
-    return times;
-  };
+    };
 
-  const availableDates = getAvailableDates();
-  const availableTimes = getAvailableTimes();
+    fetchDisponibilidad();
+  }, [fecha, hora]);
 
-  const getMesasConEstado = (fechaSeleccionada, horaSeleccionada) => {
-    const ocupadas =
-      (disponibilidad[fechaSeleccionada] &&
-        disponibilidad[fechaSeleccionada][horaSeleccionada]) ||
-      [];
+  // Obtiene estado de mesas (ocupadas o no)
+  const getStatusTables = () => {
     return mesas.map((m) => ({
       ...m,
       ocupado: ocupadas.includes(m.id),
     }));
   };
 
-  const mesasConEstado = getMesasConEstado(fecha, hora);
+  // Crear reserva
+  const createReservation = async (e) => {
+    e.preventDefault();
+    const reservaData = {
+      tableNumber: selectedMesa,
+      date: fecha,
+      time: hora,
+      name: nombre,
+      surname: apellido,
+      phoneNumber: telefono,
+    };
 
-  const handleMesaClick = (mesaId) => {
-    if (!mesasConEstado.find((m) => m.id === mesaId).ocupado) {
-      setSelectedMesa(mesaId);
-      setShowForm(true); // Mostrar formulario directo al elegir mesa
+    try {
+      const res = await fetch("http://localhost:8080/api/reservation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reservaData),
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log(`Reserva creada. Código: ${data.code}`);
+        router.push(`/reservation/${data.code}`)
+      } else {
+        console.log(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error al crear reserva");
     }
+  };
+
+  // Buscar reserva
+  const searchReservation = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/reservation/${reservaCode}`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        console.log(
+          `Reserva encontrada: Mesa ${data.tableNumber} A nombre de: ${data.name} ${data.surname}, Fecha: ${data.date}, Hora: ${data.time}`
+        );
+        router.push(`/reservation/${data.code}`)
+      } else {
+        console.log(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleMesaClick = (id) => {
+    setSelectedMesa(id);
+    setShowForm(true);
   };
 
   return (
@@ -121,7 +159,7 @@ const Reservation = () => {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-            {mesasConEstado.map((mesa) => (
+            {getStatusTables().map((mesa) => (
               <button
                 key={mesa.id}
                 onClick={() => handleMesaClick(mesa.id)}
@@ -144,20 +182,7 @@ const Reservation = () => {
         {/* Columna Derecha - Formulario */}
         <div className="flex-1 bg-neutral-800 p-6 rounded-lg">
           {showForm ? (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                console.log({
-                  nombre,
-                  apellido,
-                  telefono,
-                  mesa: selectedMesa,
-                  fecha,
-                  hora,
-                });
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={createReservation} className="space-y-4">
               <h2 className="text-xl font-bold mb-4">Datos de la reserva</h2>
               <p className="text-sm text-gray-400 mb-2">
                 Mesa: {selectedMesa} | Fecha: {fecha} | Hora: {hora}
@@ -179,7 +204,7 @@ const Reservation = () => {
                 required
               />
               <input
-                type="tel"
+                type="int"
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
                 placeholder="Teléfono"
@@ -196,7 +221,8 @@ const Reservation = () => {
           ) : (
             <p className="text-gray-400">Selecciona una mesa para continuar.</p>
           )}
-          {/* Si el usuario ya tiene codigo */}
+
+          {/* Si el usuario ya tiene código */}
           <div className="mt-6 w-full max-w-md text-center">
             <div className="flex items-center justify-center gap-4">
               <p className="text-lg">¿Ya tenés una reserva?</p>
@@ -216,7 +242,10 @@ const Reservation = () => {
                   placeholder="Código de reserva"
                   className="px-4 py-2 rounded-lg text-black bg-white w-64"
                 />
-                <button className="bg-green-600 px-6 py-2 rounded-lg cursor-pointer hover:bg-green-700 transition">
+                <button
+                  onClick={searchReservation}
+                  className="bg-green-600 px-6 py-2 rounded-lg cursor-pointer hover:bg-green-700 transition"
+                >
                   Buscar Reserva
                 </button>
               </div>
@@ -226,6 +255,4 @@ const Reservation = () => {
       </div>
     </div>
   );
-};
-
-export default Reservation;
+}

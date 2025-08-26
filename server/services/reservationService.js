@@ -4,17 +4,63 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function createReservation(data) {
+  const { tableNumber, date, time, name, surname, phoneNumber } = data;
+
+  const reservationDate = new Date(date); // Conversión a Date
+
+  // Verificar si ya existe una reserva activa
+  const existingReservation = await prisma.reservation.findFirst({
+    where: {
+      tableNumber,
+      date: reservationDate,
+      time,
+      status: "active",
+    },
+  });
+
+  if (existingReservation) {
+    throw new Error("La mesa ya está reservada para esta fecha y hora");
+  }
+
+  // Generar código único
   const code = generateCode();
-  const expiresAt = new Date(data.date);
+
+  // Calcular expiración
+  const expiresAt = new Date(reservationDate);
   expiresAt.setDate(expiresAt.getDate() + 1);
 
   return await prisma.reservation.create({
     data: {
-      ...data,
+      tableNumber,
+      date: reservationDate,
+      time,
+      name,
+      surname,
+      phoneNumber: parseInt(phoneNumber),
       code,
       expiresAt,
+      status: "active",
     },
   });
+}
+
+export async function checkAvailability(req, res) {
+  const { date, time } = req.query;
+  try {
+    const reservations = await prisma.reservation.findMany({
+      where: {
+        date: new Date(date),
+        time,
+        status: "active",
+      },
+      select: { tableNumber: true },
+    });
+
+    const occupiedTables = reservations.map((r) => r.tableNumber);
+    res.json({ occupiedTables });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 }
 
 export async function cancelReservation(code) {
