@@ -36,7 +36,7 @@ export async function createReservation(data) {
       time,
       name,
       surname,
-      phoneNumber: parseInt(phoneNumber),
+      phoneNumber,
       code,
       expiresAt,
       status: "active",

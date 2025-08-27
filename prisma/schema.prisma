@@ -19,7 +19,7 @@ model Reservation {
   time        String
   name        String
   surname     String
-  phoneNumber Int
+  phoneNumber String
   email       String?
   createdAt   DateTime @default(now())
   expiresAt   DateTime
