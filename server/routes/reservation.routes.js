@@ -16,9 +16,8 @@ router.post("/", createReservation);
 router.get("/", getAllReservations);
 router.get("/availability", checkAvailability);
 router.get("/tables", fetchAvailableTables);
-
 router.get("/:code", getReservation);
-router.delete("/:code", deleteReservationController);
 router.patch("/cancel/:code", cancelReservation);
+router.delete("/:code", deleteReservationController);
 
 export default router;

@@ -83,12 +83,25 @@ export async function checkAvailability(req, res) {
   }
 }
 
+// Ajusta según tu path
+
 export async function cancelReservation(code) {
+  // Buscar la reserva por código
   const reservation = await prisma.reservation.findUnique({ where: { code } });
   if (!reservation) throw new Error("Reserva no encontrada");
 
+  const [hours, minutes] = reservation.time.split(":").map(Number);
+
+  const reservationDateTime = new Date(reservation.time);
+  reservationDateTime.setHours(hours, minutes, 0, 0);
+
+  console.log("Fecha y hora de la reserva:", reservationDateTime);
+
   const now = new Date();
-  const diffHours = (reservation.date - now) / 36e5;
+  console.log("Ahora:", now);
+
+  const diffHours = (reservationDateTime - now) / 36e5;
+  console.log("Horas restantes para la reserva:", diffHours);
 
   if (diffHours < 5)
     throw new Error("No se puede cancelar con menos de 5 horas");

@@ -2,7 +2,7 @@ import {
   createReservation as createReservationService,
   cancelReservation as cancelReservationService,
   getReservationByCode,
-  getAvailableTables
+  getAvailableTables,
 } from "../services/reservationService.js";
 
 import {
@@ -22,9 +22,14 @@ export async function createReservation(req, res) {
 export async function cancelReservation(req, res) {
   try {
     const { code } = req.params;
+    console.log("Cancel request received for code:", code);
+
     const updatedRes = await cancelReservationService(code);
+    console.log("Service response:", updatedRes);
+
     res.status(200).json(updatedRes);
   } catch (err) {
+    console.error("Cancel error:", err.message);
     res.status(400).json({ error: err.message });
   }
 }
@@ -58,7 +63,6 @@ export async function deleteReservationController(req, res) {
     res.status(404).json({ message: error.message });
   }
 }
-
 
 export const fetchAvailableTables = async (req, res) => {
   try {
