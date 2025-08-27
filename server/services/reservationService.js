@@ -44,6 +44,26 @@ export async function createReservation(data) {
   });
 }
 
+export async function getAvailableTables() {
+  const today = new Date();
+
+  // Generar los próximos 7 días
+  const dates = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    return date.toISOString().split("T")[0];
+  });
+
+  // Generar horarios de 11:00 a 23:00
+  const times = [];
+  for (let hour = 11; hour <= 23; hour++) {
+    const formattedHour = hour.toString().padStart(2, "0") + ":00";
+    times.push(formattedHour);
+  }
+
+  return { dates, times };
+}
+
 export async function checkAvailability(req, res) {
   const { date, time } = req.query;
   try {

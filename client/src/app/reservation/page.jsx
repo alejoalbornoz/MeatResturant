@@ -14,12 +14,26 @@ export default function Reserva() {
   const [reservaCode, setReservaCode] = useState("");
   const [showReservaInput, setShowReservaInput] = useState(false);
   const [showForm, setShowForm] = useState(false);
-
-  // Fechas y horarios disponibles (podés traerlos del backend)
-  const availableDates = ["2025-08-26", "2025-08-27", "2025-08-28"];
-  const availableTimes = ["20:00", "21:00", "22:00"];
+  const [availableDates, setAvailableDates] = useState([]);
+  const [availableTimes, setAvailableTimes] = useState([]);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchSlots = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/reservation/tables");
+        const data = await res.json();
+        
+        setAvailableDates(data.dates || []);
+        setAvailableTimes(data.times || []);
+      } catch (error) {
+        console.error("Error al obtener fechas y horarios:", error);
+      }
+    };
+
+    fetchSlots();
+  }, []);
 
   // Simula las mesas fijas del restaurante
   useEffect(() => {
@@ -80,7 +94,7 @@ export default function Reserva() {
       const data = await res.json();
       if (res.ok) {
         console.log(`Reserva creada. Código: ${data.code}`);
-        router.push(`/reservation/${data.code}`)
+        router.push(`/reservation/${data.code}`);
       } else {
         console.log(`Error: ${data.error}`);
       }
@@ -101,7 +115,7 @@ export default function Reserva() {
         console.log(
           `Reserva encontrada: Mesa ${data.tableNumber} A nombre de: ${data.name} ${data.surname}, Fecha: ${data.date}, Hora: ${data.time}`
         );
-        router.push(`/reservation/${data.code}`)
+        router.push(`/reservation/${data.code}`);
       } else {
         console.log(`Error: ${data.error}`);
       }
