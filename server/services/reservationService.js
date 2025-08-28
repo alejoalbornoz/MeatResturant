@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function createReservation(data) {
-  const { tableNumber, date, time, name, surname, phoneNumber } = data;
+  const { tableNumber, date, time, name, surname, phoneNumber, numberOfPeople } = data;
 
   const reservationDate = new Date(date); // Conversión a Date
 
@@ -37,6 +37,7 @@ export async function createReservation(data) {
       name,
       surname,
       phoneNumber,
+      numberOfPeople,
       code,
       expiresAt,
       status: "active",

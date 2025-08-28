@@ -1,18 +1,20 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { showToast } from "nextjs-toast-notify";
 
-export default function Reserva() {
-  const [fecha, setFecha] = useState("");
-  const [hora, setHora] = useState("");
-  const [mesas, setMesas] = useState([]);
-  const [ocupadas, setOcupadas] = useState([]);
-  const [selectedMesa, setSelectedMesa] = useState(null);
-  const [nombre, setNombre] = useState("");
-  const [apellido, setApellido] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [reservaCode, setReservaCode] = useState("");
-  const [showReservaInput, setShowReservaInput] = useState(false);
+export default function Reservation() {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [tables, setTables] = useState([]);
+  const [occupiedTables, setOccupiedTables] = useState([]);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [numberOfPeople, setNumberOfPeople] = useState(1);
+  const [reservationCode, setReservationCode] = useState("");
+  const [showReservationInput, setShowReservationInput] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [availableDates, setAvailableDates] = useState([]);
   const [availableTimes, setAvailableTimes] = useState([]);
@@ -24,124 +26,134 @@ export default function Reserva() {
       try {
         const res = await fetch("http://localhost:8080/api/reservation/tables");
         const data = await res.json();
-        
+
         setAvailableDates(data.dates || []);
         setAvailableTimes(data.times || []);
       } catch (error) {
-        console.error("Error al obtener fechas y horarios:", error);
+        console.error("Error fetching dates and times:", error);
       }
     };
 
     fetchSlots();
   }, []);
 
-  // Simula las mesas fijas del restaurante
   useEffect(() => {
-    setMesas(
+    setTables(
       Array.from({ length: 16 }, (_, i) => ({
         id: i + 1,
-        nombre: `Mesa ${i + 1}`,
+        name: `Table ${i + 1}`,
       }))
     );
   }, []);
 
-  // Trae disponibilidad desde backend cuando cambian fecha u hora
   useEffect(() => {
-    if (!fecha || !hora) return;
+    if (!date || !time) return;
 
-    const fetchDisponibilidad = async () => {
+    const fetchAvailability = async () => {
       try {
         const res = await fetch(
-          `http://localhost:8080/api/reservation/availability?date=${fecha}&time=${hora}`
+          `http://localhost:8080/api/reservation/availability?date=${date}&time=${time}`
         );
         const data = await res.json();
-        setOcupadas(data.occupiedTables || []);
+        setOccupiedTables(data.occupiedTables || []);
       } catch (error) {
-        console.error("Error al obtener disponibilidad:", error);
+        console.error("Error fetching availability:", error);
       }
     };
 
-    fetchDisponibilidad();
-  }, [fecha, hora]);
+    fetchAvailability();
+  }, [date, time]);
 
-  // Obtiene estado de mesas (ocupadas o no)
   const getStatusTables = () => {
-    return mesas.map((m) => ({
-      ...m,
-      ocupado: ocupadas.includes(m.id),
+    return tables.map((t) => ({
+      ...t,
+      occupied: occupiedTables.includes(t.id),
     }));
   };
 
-  // Crear reserva
   const createReservation = async (e) => {
     e.preventDefault();
-    const reservaData = {
-      tableNumber: selectedMesa,
-      date: fecha,
-      time: hora,
-      name: nombre,
-      surname: apellido,
-      phoneNumber: telefono,
+    const reservationData = {
+      tableNumber: selectedTable,
+      date: date,
+      time: time,
+      name: name,
+      surname: surname,
+      phoneNumber: phoneNumber,
+      numberOfPeople: numberOfPeople,
     };
 
     try {
       const res = await fetch("http://localhost:8080/api/reservation", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(reservaData),
+        body: JSON.stringify(reservationData),
       });
 
       const data = await res.json();
       if (res.ok) {
-        console.log(`Reserva creada. Código: ${data.code}`);
+        console.log(`Reservation created. Code: ${data.code}`);
         router.push(`/reservation/${data.code}`);
       } else {
         console.log(`Error: ${data.error}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Error al crear reserva");
+      showToast.error("Error creating reservation!", {
+        duration: 4000,
+        progress: true,
+        position: "top-center",
+        transition: "bounceIn",
+        icon: "",
+        sound: false,
+      });
     }
   };
 
-  // Buscar reserva
   const searchReservation = async () => {
     try {
       const res = await fetch(
-        `http://localhost:8080/api/reservation/${reservaCode}`
+        `http://localhost:8080/api/reservation/${reservationCode}`
       );
       const data = await res.json();
       if (res.ok) {
         console.log(
-          `Reserva encontrada: Mesa ${data.tableNumber} A nombre de: ${data.name} ${data.surname}, Fecha: ${data.date}, Hora: ${data.time}`
+          `Reservation found: Table ${data.tableNumber} Name: ${data.name} ${data.surname}, Date: ${data.date}, Time: ${data.time}`
         );
         router.push(`/reservation/${data.code}`);
       } else {
         console.log(`Error: ${data.error}`);
+        showToast.error("Code not found!", {
+          duration: 4000,
+          progress: true,
+          position: "top-center",
+          transition: "bounceIn",
+          icon: "",
+          sound: false,
+        });
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleMesaClick = (id) => {
-    setSelectedMesa(id);
+  const handleTableClick = (id) => {
+    setSelectedTable(id);
     setShowForm(true);
   };
 
   return (
     <div className="h-screen bg-[#070608] text-white flex flex-col items-center justify-center px-5">
-      <h1 className="text-3xl font-bold mb-6">Reservá tu mesa 🍷🥩</h1>
+      <h1 className="text-3xl font-bold mb-6">Book your table 🍷🥩</h1>
 
       <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl bg-neutral-900 p-6 rounded-2xl shadow-lg">
-        {/* Columna Izquierda - Selección */}
         <div className="flex-1">
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <select
-              value={fecha}
+              value={date}
               onChange={(e) => {
-                setFecha(e.target.value);
-                setSelectedMesa(null);
+                setDate(e.target.value);
+                setSelectedTable(null);
                 setShowForm(false);
               }}
               className="p-2 rounded bg-gray-800 border border-gray-700"
@@ -155,10 +167,10 @@ export default function Reserva() {
             </select>
 
             <select
-              value={hora}
+              value={time}
               onChange={(e) => {
-                setHora(e.target.value);
-                setSelectedMesa(null);
+                setTime(e.target.value);
+                setSelectedTable(null);
                 setShowForm(false);
               }}
               className="p-2 rounded bg-gray-800 border border-gray-700"
@@ -173,58 +185,70 @@ export default function Reserva() {
           </div>
 
           <div className="grid grid-cols-4 gap-4">
-            {getStatusTables().map((mesa) => (
+            {getStatusTables().map((table) => (
               <button
-                key={mesa.id}
-                onClick={() => handleMesaClick(mesa.id)}
-                disabled={mesa.ocupado}
+                key={table.id}
+                onClick={() => handleTableClick(table.id)}
+                disabled={table.occupied}
                 className={`w-16 h-16 flex items-center justify-center rounded-full font-bold transition
                   ${
-                    mesa.ocupado
+                    table.occupied
                       ? "bg-red-600 cursor-not-allowed"
-                      : selectedMesa === mesa.id
+                      : selectedTable === table.id
                       ? "bg-green-500"
                       : "bg-gray-700 hover:bg-green-600"
                   }`}
               >
-                {mesa.id}
+                {table.id}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Columna Derecha - Formulario */}
         <div className="flex-1 bg-neutral-800 p-6 rounded-lg">
           {showForm ? (
             <form onSubmit={createReservation} className="space-y-4">
               <h2 className="text-xl font-bold mb-4">Datos de la reserva</h2>
               <p className="text-sm text-gray-400 mb-2">
-                Mesa: {selectedMesa} | Fecha: {fecha} | Hora: {hora}
+                Mesa: {selectedTable} | Fecha: {date} | Hora: {time}
               </p>
               <input
                 type="text"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Nombre"
                 className="w-full px-4 py-2 rounded mb-3 text-white"
                 required
               />
               <input
                 type="text"
-                value={apellido}
-                onChange={(e) => setApellido(e.target.value)}
+                value={surname}
+                onChange={(e) => setSurname(e.target.value)}
                 placeholder="Apellido"
                 className="w-full px-4 py-2 rounded mb-3 text-white"
                 required
               />
               <input
                 type="int"
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="Teléfono"
                 className="w-full px-4 py-2 rounded mb-3 text-white"
                 required
               />
+              <p className="w-full px-4 py-2 rounded mb-3 text-gray-400">
+                Numero de personas:
+                <input
+                  type="number"
+                  value={numberOfPeople}
+                  onChange={(e) =>
+                    setNumberOfPeople(parseInt(e.target.value, 10))
+                  }
+                  className="w-20 px-4 py-2 rounded mb-3 text-white border-1 ml-4 border-gray-400"
+                  min="1"
+                  max="15"
+                />
+              </p>
               <button
                 type="submit"
                 className="bg-green-600 px-6 py-2 rounded-lg cursor-pointer hover:bg-green-700 transition w-full"
@@ -236,23 +260,22 @@ export default function Reserva() {
             <p className="text-gray-400">Selecciona una mesa para continuar.</p>
           )}
 
-          {/* Si el usuario ya tiene código */}
           <div className="mt-6 w-full max-w-md text-center">
             <div className="flex items-center justify-center gap-4">
               <p className="text-lg">¿Ya tenés una reserva?</p>
               <button
-                onClick={() => setShowReservaInput(!showReservaInput)}
+                onClick={() => setShowReservationInput(!showReservationInput)}
                 className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600 transition"
               >
-                {showReservaInput ? "Cerrar" : "Ingresar código"}
+                {showReservationInput ? "Cerrar" : "Ingresar código"}
               </button>
             </div>
-            {showReservaInput && (
+            {showReservationInput && (
               <div className="mt-4 flex flex-col gap-3 items-center">
                 <input
                   type="text"
-                  value={reservaCode}
-                  onChange={(e) => setReservaCode(e.target.value)}
+                  value={reservationCode}
+                  onChange={(e) => setReservationCode(e.target.value)}
                   placeholder="Código de reserva"
                   className="px-4 py-2 rounded-lg text-black bg-white w-64"
                 />

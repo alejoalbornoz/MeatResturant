@@ -21,6 +21,7 @@ model Reservation {
   surname     String
   phoneNumber String
   email       String?
+  numberOfPeople Int?
   createdAt   DateTime @default(now())
   expiresAt   DateTime
   status      String   @default("active") // active | cancelled

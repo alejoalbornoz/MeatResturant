@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import { showToast } from "nextjs-toast-notify";
 
 export default function ReservationPage({ params }) {
   const router = useRouter();
@@ -39,18 +40,47 @@ export default function ReservationPage({ params }) {
     try {
       const res = await fetch(
         `http://localhost:8080/api/reservation/cancel/${data.code}`,
-        { method: "PATCH" }
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
       );
 
       if (res.ok) {
-        alert("Reserva cancelada correctamente.");
-        router.push("/"); 
+        showToast.success("¡Cancelaste tu reserva con éxito!", {
+          duration: 4000,
+          progress: true,
+          position: "top-center",
+          transition: "fadeIn",
+          icon: "",
+          sound: false,
+        });
+        router.push("/");
       } else {
-        alert("Error al cancelar la reserva");
+        const errorData = await res.json();
+        console.log(errorData.error);
+        showToast.error("¡Error al cancelar la reserva!", {
+          duration: 4000,
+          progress: true,
+          position: "top-center",
+          transition: "bounceIn",
+          icon: "",
+          sound: false,
+        });
       }
     } catch (error) {
       console.error(error);
-      alert("No se pudo cancelar la reserva");
+      showToast.error("¡No se pudo cancelar la reserva!", {
+        duration: 4000,
+        progress: true,
+        position: "top-center",
+        transition: "bounceIn",
+        icon: "",
+        sound: false,
+      });
     }
   };
 
@@ -86,13 +116,13 @@ export default function ReservationPage({ params }) {
           <div className="text-[20px]">
             <button
               onClick={cancelReservation}
-              className="bg-red-600 p-2 rounded-md mt-5 cursor-pointer"
+              className="bg-red-600 p-2 rounded-md mt-5 cursor-pointer font-bold"
             >
               Cancelar Reserva
             </button>
             <Link
               href="/menu"
-              className="bg-amber-600 p-2 rounded-md ml-2 cursor-pointer"
+              className="bg-amber-600 p-2 rounded-md ml-2 cursor-pointer font-bold"
             >
               Menu
             </Link>
