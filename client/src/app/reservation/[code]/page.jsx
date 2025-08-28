@@ -97,36 +97,46 @@ export default function ReservationPage({ params }) {
   });
 
   return (
-    <div className="h-screen text-white flex flex-col items-center justify-center px-5">
-      <div className="bg-gray-800 p-15 rounded-3xl">
-        <h1 className="text-2xl font-bold">Reserva Confirmada</h1>
-        <div className="mt-4 space-y-2 text-white text-2xl">
+    <div className="h-screen text-white flex items-center justify-center px-5 bg-gradient-to-br from-black-900 via-neutral-950 to-black">
+      <div className="bg-neutral-800/80 p-10 rounded-2xl shadow-2xl w-full max-w-md border border-green-900">
+        <h1 className="text-3xl font-extrabold text-white text-center">
+          Reserva Confirmada
+        </h1>
+
+        <div className="mt-6 space-y-3 text-lg">
           <p>
-            <strong>Código:</strong> {data.code}
+            <span className="font-semibold text-gray-300">Código:</span>
+            <span className="ml-2 text-green-500">{data.code}</span>
           </p>
           <p>
-            <strong>Nombre:</strong> {data.name} {data.surname}
+            <span className="font-semibold text-gray-300">Nombre:</span>
+            <span className="ml-2">
+              {data.name} {data.surname}
+            </span>
           </p>
           <p>
-            <strong>Fecha:</strong> {fechaFormateada}
+            <span className="font-semibold text-gray-300">Fecha:</span>
+            <span className="ml-2">{fechaFormateada}</span>
           </p>
           <p>
-            <strong>Hora:</strong> {data.time}
+            <span className="font-semibold text-gray-300">Hora:</span>
+            <span className="ml-2">{data.time}</span>
           </p>
-          <div className="text-[20px]">
-            <button
-              onClick={cancelReservation}
-              className="bg-red-600 p-2 rounded-md mt-5 cursor-pointer font-bold"
-            >
-              Cancelar Reserva
-            </button>
-            <Link
-              href="/menu"
-              className="bg-amber-600 p-2 rounded-md ml-2 cursor-pointer font-bold"
-            >
-              Menu
-            </Link>
-          </div>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-6">
+          <button
+            onClick={cancelReservation}
+            className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold transition duration-200 cursor-pointer"
+          >
+            Cancelar Reserva
+          </button>
+          <Link
+            href="/menu"
+            className="bg-amber-600 hover:bg-amber-700 px-4 py-2 rounded-lg font-bold transition duration-200"
+          >
+            Menú
+          </Link>
         </div>
       </div>
     </div>

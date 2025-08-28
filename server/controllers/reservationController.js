@@ -8,6 +8,8 @@ import {
 import {
   getAllReservationsCode,
   deleteReservationByCode,
+  updateReservation,
+  getReservationStats,
 } from "../services/reservationAdmin.js";
 
 export async function createReservation(req, res) {
@@ -72,3 +74,41 @@ export const fetchAvailableTables = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export async function updateReservationController(req, res) {
+  const { code } = req.params;
+  const {
+    tableNumber,
+    time,
+    date,
+    phoneNumber,
+    status,
+    numberOfPeople,
+    regenerateCode,
+  } = req.body;
+
+  try {
+    const updated = await updateReservation(
+      code,
+      { tableNumber, time, date, phoneNumber, status, numberOfPeople },
+      regenerateCode
+    );
+    res.json(updated);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+export async function fetchReservationStats(req, res) {
+  const { startDate, endDate } = req.query;
+
+  try {
+    const stats = await getReservationStats(startDate, endDate);
+    res.json(stats);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener estadísticas de reservas" });
+  }
+}
