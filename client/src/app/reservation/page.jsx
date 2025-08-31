@@ -144,7 +144,7 @@ export default function Reservation() {
 
   return (
     <div className="h-screen bg-[#070608] text-white flex flex-col items-center justify-center px-5">
-      <h1 className="text-3xl font-bold mb-6">Book your table 🍷🥩</h1>
+      <h1 className="text-3xl font-bold mb-6">Reserva tu mesa 🍷🥩</h1>
 
       <div className="flex flex-col lg:flex-row gap-8 w-full max-w-6xl bg-neutral-900 p-6 rounded-2xl shadow-lg">
         <div className="flex-1">
