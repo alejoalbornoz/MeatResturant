@@ -1,3 +1,6 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -11,15 +14,18 @@ const rubik = Rubik({
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const pathname = usePathname();
+  const hideComponent = pathname.startsWith("/dashboard"); // oculta también en subrutas
+
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={rubik.className}>
-        <Navbar />
+        {!hideComponent && <Navbar />}
         {children}
-        <Footer />
+        {!hideComponent && <Footer />}
       </body>
     </html>
   );

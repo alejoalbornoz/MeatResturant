@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "name": "Alejo",
+    "surname": "Albornoz",
+    "tableNumber": "5",
+    "time": "12:30",
+    "date": "2025-09-01",
+    "phoneNumber": "12345678",
+    "status": "In Process",
+    "code": "ABC123",
+    "numberOfPeople": 4,
+    "regenerateCode": "XYZ789"
+  },
+  {
+    "id": 2,
+    "name": "Lucia",
+    "surname": "Martinez",
+    "tableNumber": "12",
+    "time": "14:00",
+    "date": "2025-09-02",
+    "phoneNumber": "87654321",
+    "status": "Done",
+    "code": "DEF456",
+    "numberOfPeople": 2,
+    "regenerateCode": "UVW345"
+  },
+  {
+    "id": 3,
+    "name": "Santiago",
+    "surname": "Gomez",
+    "tableNumber": "8",
+    "time": "19:00",
+    "date": "2025-09-03",
+    "phoneNumber": "11223344",
+    "status": "Done",
+    "code": "GHI789",
+    "numberOfPeople": 6,
+    "regenerateCode": "RST123"
+  },
+  {
+    "id": 4,
+    "name": "Camila",
+    "surname": "Fernandez",
+    "tableNumber": "3",
+    "time": "20:30",
+    "date": "2025-09-01",
+    "phoneNumber": "99887766",
+    "status": "In Process",
+    "code": "JKL012",
+    "numberOfPeople": 5,
+    "regenerateCode": "OPQ456"
+  },
+  {
+    "id": 5,
+    "name": "Matias",
+    "surname": "Lopez",
+    "tableNumber": "7",
+    "time": "13:15",
+    "date": "2025-09-02",
+    "phoneNumber": "44332211",
+    "status": "Done",
+    "code": "MNO345",
+    "numberOfPeople": 3,
+    "regenerateCode": "LMN678"
+  }
+]
