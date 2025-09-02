@@ -101,28 +101,18 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// export const schema = z.object({
-//   id: z.number(),
-//   header: z.string(),
-//   type: z.string(),
-//   status: z.string(),
-//   target: z.string(),
-//   limit: z.string(),
-//   reviewer: z.string(),
-// });
-
 export const schema = z.object({
   id: z.number(),
   name: z.string(),
   surname: z.string(),
-  tableNumber: z.string(),
+  tableNumber: z.number(),
   time: z.string(),
   date: z.string(),
   phoneNumber: z.string(),
   status: z.string(),
   code: z.string(),
   numberOfPeople: z.number(),
-  regenerateCode: z.string(), // o función, depende del backend
+  
 });
 
 // Create a separate component for the drag handle
@@ -140,7 +130,7 @@ function DragHandle({ id }: { id: number }) {
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
       <IconGripVertical className="text-muted-foreground size-3" />
-      <span className="sr-only">Drag to reorder</span>
+      <span className="sr-only">Arrastrar orden</span>
     </Button>
   );
 }
@@ -158,16 +148,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-{
-  accessorKey: "name", // o cualquier key que tenga sentido
-  header: "Nombre y Apellido",
-  cell: ({ row }) => (
-    <TableCellViewer item={row.original}/>
-      
-
-    
-  ),
-},
+  {
+    accessorKey: "name",
+    header: "Nombre y Apellido",
+    cell: ({ row }) => <TableCellViewer item={row.original} />,
+  },
   {
     accessorKey: "date",
     header: "Fecha y Hora",
@@ -183,8 +168,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "status",
     header: "Estado",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
+      <Badge variant="outline" className="text-muted-foreground px-2">
+        {row.original.status === "active" ? (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         ) : (
           <IconLoader />
@@ -618,7 +603,8 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {`${item.name} ${item.surname}`} {/* <-- Ahora muestra nombre y apellido */}
+          {`${item.name} ${item.surname}`}{" "}
+          {/* <-- Ahora muestra nombre y apellido */}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
@@ -671,10 +657,13 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               <Separator />
               <div className="grid gap-2">
                 <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month <IconTrendingUp className="size-4" />
+                  Trending up by 5.2% this month{" "}
+                  <IconTrendingUp className="size-4" />
                 </div>
                 <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just some random text to test the layout. It spans multiple lines and should wrap around.
+                  Showing total visitors for the last 6 months. This is just
+                  some random text to test the layout. It spans multiple lines
+                  and should wrap around.
                 </div>
               </div>
               <Separator />
