@@ -112,7 +112,6 @@ export const schema = z.object({
   status: z.string(),
   code: z.string(),
   numberOfPeople: z.number(),
-  
 });
 
 // Create a separate component for the drag handle
@@ -129,7 +128,7 @@ function DragHandle({ id }: { id: number }) {
       size="icon"
       className="text-muted-foreground size-7 hover:bg-transparent"
     >
-      <IconGripVertical className="text-muted-foreground size-3" />
+      <IconGripVertical className="text-muted-foreground size-4" />
       <span className="sr-only">Arrastrar orden</span>
     </Button>
   );
@@ -168,7 +167,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     accessorKey: "status",
     header: "Estado",
     cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-2">
+      <Badge variant="outline" className="text-muted-foreground px-2 ">
         {row.original.status === "active" ? (
           <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
         ) : (
@@ -180,7 +179,11 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     accessorKey: "tableNumber",
-    header: () => <div className="w-full text-right">Mesa</div>,
+    header: () => (
+      <div className="text-center min-w-[50px] transform -translate-x-7">
+        Mesa
+      </div>
+    ),
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -193,7 +196,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         }}
       >
         <Input
-          className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
+          className="h-8 w-[50px] px-0 py-0 text-center border-transparent bg-transparent shadow-none
+             hover:bg-input/30 focus-visible:bg-background 
+             dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
           defaultValue={row.original.tableNumber}
           id={`${row.original.id}-table`}
         />
@@ -202,7 +207,9 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     accessorKey: "numberOfPeople",
-    header: () => <div className="w-full text-right">Cantidad de personas</div>,
+    header: () => (
+      <div className="text-center transform ">Cantidad de personas</div>
+    ),
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -215,18 +222,21 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         }}
       >
         <Input
-          className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
+          className="h-8 w-[120px] text-center border-transparent bg-transparent shadow-none translate-x-20
+                   hover:bg-input/30 focus-visible:bg-background 
+                   dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
           defaultValue={row.original.numberOfPeople}
           id={`${row.original.id}-people`}
         />
       </form>
     ),
   },
+
   {
     accessorKey: "phoneNumber",
-    header: () => <div className="w-full text-right">Número de teléfono</div>,
+    header: () => <div className="w-full text-center">Número de teléfono</div>,
     cell: ({ row }) => (
-      <span className="text-right block">{row.original.phoneNumber}</span>
+      <span className="text-center block">{row.original.phoneNumber}</span>
     ),
   },
   {
@@ -249,11 +259,10 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
+          <DropdownMenuItem>Editar</DropdownMenuItem>
+          <DropdownMenuItem>Cancelar</DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive">Eliminar</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     ),
@@ -368,29 +377,23 @@ export function DataTable({
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="outline">Outline</SelectItem>
-            <SelectItem value="past-performance">Past Performance</SelectItem>
-            <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
+            <SelectItem value="outline">Reservas</SelectItem>
+            <SelectItem value="past-performance">Mesas disponibles</SelectItem>
           </SelectContent>
         </Select>
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="outline">Outline</TabsTrigger>
+          <TabsTrigger value="outline">Reservas</TabsTrigger>
           <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
+            Mesas disponibles <Badge variant="secondary">3</Badge>
           </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
+                <span className="hidden lg:inline">Personalizar columnas</span>
+                <span className="lg:hidden">Columnas</span>
                 <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -420,7 +423,7 @@ export function DataTable({
           </DropdownMenu>
           <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="hidden lg:inline">Añadir Reserva</span>
           </Button>
         </div>
       </div>
@@ -471,7 +474,7 @@ export function DataTable({
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      No se encontraron resultados.
                     </TableCell>
                   </TableRow>
                 )}
@@ -481,13 +484,13 @@ export function DataTable({
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredSelectedRowModel().rows.length} de{" "}
+            {table.getFilteredRowModel().rows.length} fila(s) seleccionada.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Rows per page
+                Fila por pagina
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -510,7 +513,7 @@ export function DataTable({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{" "}
+              Pagina {table.getState().pagination.pageIndex + 1} de{" "}
               {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
@@ -671,39 +674,39 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Nombre</Label>
               <Input id="name" defaultValue={item.name} />
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="surname">Surname</Label>
+              <Label htmlFor="surname">Apellido</Label>
               <Input id="surname" defaultValue={item.surname} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="tableNumber">Table Number</Label>
+                <Label htmlFor="tableNumber">Numero de mesa</Label>
                 <Input id="tableNumber" defaultValue={item.tableNumber} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="numberOfPeople">Number of People</Label>
+                <Label htmlFor="numberOfPeople">Numero de personas</Label>
                 <Input id="numberOfPeople" defaultValue={item.numberOfPeople} />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-3">
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">Fecha</Label>
                 <Input id="date" defaultValue={item.date} />
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="time">Time</Label>
+                <Label htmlFor="time">Hora</Label>
                 <Input id="time" defaultValue={item.time} />
               </div>
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Label htmlFor="phoneNumber">Numero de telefono</Label>
               <Input id="phoneNumber" defaultValue={item.phoneNumber} />
             </div>
             <div className="flex flex-col gap-3">
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">Estado</Label>
               <Select defaultValue={item.status}>
                 <SelectTrigger id="status" className="w-full">
                   <SelectValue placeholder="Select a status" />
