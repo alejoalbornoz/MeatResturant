@@ -62,7 +62,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Drawer,
   DrawerClose,
@@ -358,6 +357,9 @@ export function DataTable({
       });
     }
   }
+
+
+
 
   return (
     <Tabs
