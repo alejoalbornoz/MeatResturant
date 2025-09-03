@@ -1,14 +1,12 @@
-"use client";
+ "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable, schema  } from "@/components/data-table";
+import { DataTable, schema } from "@/components/data-table";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useState, useEffect } from "react";
 import { z } from "zod";
-import data from "./data.json";
-
 
 type Reservation = z.infer<typeof schema>;
 
