@@ -4,7 +4,21 @@ import { generateCode } from "../utils/generateCode.js";
 const prisma = new PrismaClient();
 
 export async function getAllReservationsCode() {
-  return prisma.reservation.findMany();
+  // Limpiar reservas muy antiguas (90 días después de expiración)
+  await prisma.reservation.deleteMany({
+    where: {
+      expiresAt: {
+        lt: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+      },
+    },
+  });
+
+  // Traer solo reservas que no expiraron
+  return prisma.reservation.findMany({
+    where: {
+      expiresAt: { gte: new Date() },
+    },
+  });
 }
 
 export async function deleteReservationByCode(code) {
@@ -57,7 +71,6 @@ export async function updateReservation(code, updates, regenerateCode = false) {
     throw error;
   }
 }
-
 
 export async function getReservationStats(startDate, endDate) {
   const reservations = await prisma.reservation.groupBy({

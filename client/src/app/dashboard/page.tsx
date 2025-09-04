@@ -28,7 +28,8 @@ export default function Dashboard() {
         const mapped: Reservation[] = data.map((r) => ({
           ...r,
           tableNumber: r.tableNumber.toString(),
-          date: new Date(r.date).toLocaleDateString(),
+          date: r.date.split("T")[0],
+
           regenerateCode: "",
         }));
         setReservations(mapped);

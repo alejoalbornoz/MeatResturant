@@ -4,7 +4,15 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function createReservation(data) {
-  const { tableNumber, date, time, name, surname, phoneNumber, numberOfPeople } = data;
+  const {
+    tableNumber,
+    date,
+    time,
+    name,
+    surname,
+    phoneNumber,
+    numberOfPeople,
+  } = data;
 
   const reservationDate = new Date(date); // Conversión a Date
 
@@ -64,6 +72,7 @@ export async function getAvailableTables() {
 
   return { dates, times };
 }
+
 
 export async function checkAvailability(req, res) {
   const { date, time } = req.query;
