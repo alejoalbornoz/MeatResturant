@@ -125,3 +125,4 @@ export async function cancelReservation(code) {
 export async function getReservationByCode(code) {
   return prisma.reservation.findUnique({ where: { code } });
 }
+

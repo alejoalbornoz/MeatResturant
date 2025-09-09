@@ -27,7 +27,6 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconCircleCheckFilled,
-  IconDotsVertical,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
@@ -76,8 +75,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -99,6 +96,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
+import { ActionsCell } from "./actions-cell";
+
+type TableMeta = {
+  removeReservation: (code: string) => void;
+};
 
 export const schema = z.object({
   id: z.number(),
@@ -133,7 +136,8 @@ function DragHandle({ id }: { id: number }) {
   );
 }
 
-const columns: ColumnDef<z.infer<typeof schema>>[] = [
+// 🔹 Columnas de la tabla
+export const columns: ColumnDef<z.infer<typeof schema>>[] = [
   {
     id: "drag",
     header: () => null,
@@ -230,7 +234,6 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </form>
     ),
   },
-
   {
     accessorKey: "phoneNumber",
     header: () => <div className="w-full text-center">Número de teléfono</div>,
@@ -245,25 +248,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
   {
     id: "actions",
-    cell: () => (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Editar</DropdownMenuItem>
-          <DropdownMenuItem>Cancelar</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Eliminar</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    header: "Acciones",
+    cell: ({ row, table }) => (
+      <ActionsCell
+        code={row.original.code}
+        onRemove={(code: string) =>
+          (table.options.meta as TableMeta)?.removeReservation(code)
+        }
+      />
     ),
   },
 ];
@@ -322,7 +314,7 @@ export function DataTable({
     [data]
   );
 
-  const table = useReactTable({
+  const table = useReactTable<z.infer<typeof schema>>({
     data,
     columns,
     state: {
@@ -345,6 +337,11 @@ export function DataTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    meta: {
+      removeReservation: (code: string) => {
+        setData((prev) => prev.filter((r) => r.code !== code));
+      },
+    } as TableMeta, // marcar explícitamente como TableMeta
   });
 
   function handleDragEnd(event: DragEndEvent) {
@@ -357,9 +354,6 @@ export function DataTable({
       });
     }
   }
-
-
-
 
   return (
     <Tabs
@@ -425,7 +419,9 @@ export function DataTable({
           </DropdownMenu>
           <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Añadir Reserva</span>
+            <Link href="/dashboard/create" className="hidden lg:inline">
+              Añadir Reserva
+            </Link>
           </Button>
         </div>
       </div>
