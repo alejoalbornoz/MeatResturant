@@ -31,6 +31,7 @@ import {
   IconLayoutColumns,
   IconLoader,
   IconPlus,
+  IconSearch,
   IconTrendingUp,
 } from "@tabler/icons-react";
 import {
@@ -421,6 +422,12 @@ export function DataTable({
             <IconPlus />
             <Link href="/dashboard/create" className="hidden lg:inline">
               Añadir Reserva
+            </Link>
+          </Button>
+           <Button variant="outline" size="sm">
+            <IconSearch />
+            <Link href="#" className="hidden lg:inline">
+              Buscar Reserva
             </Link>
           </Button>
         </div>

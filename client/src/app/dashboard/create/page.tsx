@@ -33,9 +33,6 @@ export default function CreateDashboard() {
   const [surname, setSurname] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
-  const [reservationCode, setReservationCode] = useState<string>("");
-  const [showReservationInput, setShowReservationInput] =
-    useState<boolean>(false);
   const [showForm, setShowForm] = useState<boolean>(false);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
@@ -132,32 +129,6 @@ export default function CreateDashboard() {
     }
   };
 
-  const searchReservation = async () => {
-    try {
-      const res = await fetch(
-        `http://localhost:8080/api/reservation/${reservationCode}`
-      );
-      const data: Reservation & { error?: string } = await res.json();
-      if (res.ok) {
-        console.log(
-          `Reservation found: Table ${data.tableNumber} Name: ${data.name} ${data.surname}, Date: ${data.date}, Time: ${data.time}`
-        );
-        router.push(`/dashboard/${data.code}`);
-      } else {
-        console.log(`Error: ${data.error}`);
-        showToast.error("Code not found!", {
-          duration: 4000,
-          progress: true,
-          position: "top-center",
-          transition: "bounceIn",
-          icon: "",
-          sound: false,
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleTableClick = (id: number) => {
     setSelectedTable(id);
@@ -290,42 +261,10 @@ export default function CreateDashboard() {
                       </button>
                     </form>
                   ) : (
-                    <p className="text-gray-400">
+                    <p className="text-gray-400  text-center">
                       Selecciona una mesa para continuar.
                     </p>
                   )}
-
-                  {/* Buscar reserva */}
-                  <div className="mt-6 w-full max-w-md text-center">
-                    <div className="flex items-center justify-center gap-4">
-                      <p className="text-lg">¿Ya tenés una reserva?</p>
-                      <button
-                        onClick={() =>
-                          setShowReservationInput(!showReservationInput)
-                        }
-                        className="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600 transition"
-                      >
-                        {showReservationInput ? "Cerrar" : "Ingresar código"}
-                      </button>
-                    </div>
-                    {showReservationInput && (
-                      <div className="mt-4 flex flex-col gap-3 items-center">
-                        <input
-                          type="text"
-                          value={reservationCode}
-                          onChange={(e) => setReservationCode(e.target.value)}
-                          placeholder="Código de reserva"
-                          className="px-4 py-2 rounded-lg text-black bg-white w-64"
-                        />
-                        <button
-                          onClick={searchReservation}
-                          className="bg-green-600 px-6 py-2 rounded-lg cursor-pointer hover:bg-green-700 transition"
-                        >
-                          Buscar Reserva
-                        </button>
-                      </div>
-                    )}
-                  </div>
                 </div>
               </div>
             </div>

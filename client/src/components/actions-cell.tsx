@@ -62,6 +62,7 @@ export const ActionsCell: React.FC<ActionsCellProps> = ({ code, onRemove }) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
+        <DropdownMenuItem >Editar</DropdownMenuItem>
         <DropdownMenuItem onClick={handleCancel}>Cancelar</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">
