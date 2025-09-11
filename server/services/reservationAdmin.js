@@ -38,17 +38,9 @@ export async function updateReservation(code, updates, regenerateCode = false) {
   if (!code) throw new Error("El código original no ha sido proporcionado");
 
   // Construir objeto de actualización
-  const dataToUpdate = {};
+  const dataToUpdate = { ...updates };
 
-  if (updates.tableNumber) dataToUpdate.tableNumber = updates.tableNumber;
-  if (updates.time) dataToUpdate.time = updates.time;
-  if (updates.date) dataToUpdate.date = new Date(updates.date); // Asegurar tipo Date
-  if (updates.phoneNumber) dataToUpdate.phoneNumber = updates.phoneNumber;
-  if (updates.status) dataToUpdate.status = updates.status;
-  if (updates.numberOfPeople)
-    dataToUpdate.numberOfPeople = updates.numberOfPeople;
 
-  // Generar nuevo código si se solicita
   if (regenerateCode) {
     dataToUpdate.code = generateCode();
   }
