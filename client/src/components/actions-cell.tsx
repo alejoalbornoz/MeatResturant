@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
+import Link from "next/link";
 
 type ActionsCellProps = {
   code: string;
@@ -27,7 +28,6 @@ export const ActionsCell: React.FC<ActionsCellProps> = ({ code, onRemove }) => {
       if (!res.ok) throw new Error("Error al cancelar");
 
       toast.success("Reserva cancelada");
-
     } catch (error) {
       toast.error("No se pudo cancelar la reserva");
       console.error(error);
@@ -62,7 +62,9 @@ export const ActionsCell: React.FC<ActionsCellProps> = ({ code, onRemove }) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        <DropdownMenuItem >Editar</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/dashboard/edit/${code}`}>Editar</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleCancel}>Cancelar</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleDelete} className="text-red-600">

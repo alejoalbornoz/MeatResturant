@@ -77,7 +77,10 @@ export const fetchAvailableTables = async (req, res) => {
 
 export async function updateReservationController(req, res) {
   const { code } = req.params;
-  const {
+
+  let {
+    name,
+    surname,
     tableNumber,
     time,
     date,
@@ -87,10 +90,22 @@ export async function updateReservationController(req, res) {
     regenerateCode,
   } = req.body;
 
+  tableNumber = Number(tableNumber);
+  numberOfPeople = Number(numberOfPeople);
+
   try {
     const updated = await updateReservation(
       code,
-      { tableNumber, time, date, phoneNumber, status, numberOfPeople },
+      {
+        name,
+        surname,
+        tableNumber,
+        time,
+        date,
+        phoneNumber,
+        status,
+        numberOfPeople,
+      },
       regenerateCode
     );
     res.json(updated);

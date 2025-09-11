@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { showToast } from "nextjs-toast-notify";
 
 function EditReservation() {
   type FormData = {
@@ -47,7 +48,7 @@ function EditReservation() {
 
         setFormData(data);
       } catch (err) {
-        console.log("Se genero un erro inesperado:", err);
+        console.log("Se generó un error inesperado:", err);
       } finally {
         setLoading(false);
       }
@@ -57,6 +58,22 @@ function EditReservation() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // 🔹 Creamos un payload limpio solo con los campos que el backend acepta
+    const payload = {
+      name: formData.name,
+      surname: formData.surname,
+      tableNumber: Number(formData.tableNumber),
+      numberOfPeople: Number(formData.numberOfPeople),
+      phoneNumber: formData.phoneNumber,
+      date: new Date(formData.date),
+      time: formData.time,
+      status: formData.status,
+      regenerateCode: false, // o true si quieres regenerar el código
+    };
+
+    console.log("Payload final enviado al backend:", payload);
+
     try {
       const res = await fetch(
         `http://localhost:8080/api/reservation/update/${code}`,
@@ -65,25 +82,49 @@ function EditReservation() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         }
       );
 
-      if (!res.ok) throw new Error("Error al actualizar la reserva");
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error("Error al actualizar la reserva: " + errorText);
+      }
 
       const data = await res.json();
       console.log("Reserva actualizada:", data);
+      showToast.success("¡La operación se realizó con éxito!", {
+        duration: 4000,
+        progress: true,
+        position: "top-right",
+        transition: "popUp",
+        icon: "",
+        sound: false,
+      });
     } catch (err) {
-      console.log(err);
+      console.error(err);
+      showToast.error("¡La operación se realizó con éxito!", {
+        duration: 4000,
+        progress: true,
+        position: "top-right",
+        transition: "popUp",
+        icon: "",
+        sound: false,
+      });
     }
   };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
+
   if (loading) return <p className="text-white">Cargando...</p>;
 
   return (
@@ -140,7 +181,7 @@ function EditReservation() {
                 {/* Celular */}
                 <div>
                   <label
-                    htmlFor="telephone"
+                    htmlFor="phoneNumber"
                     className="block text-sm font-medium text-gray-200 mb-2"
                   >
                     Celular
@@ -196,15 +237,15 @@ function EditReservation() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label
-                      htmlFor="table"
+                      htmlFor="tableNumber"
                       className="block text-sm font-medium text-gray-200 mb-2"
                     >
                       Mesa
                     </label>
                     <input
                       type="number"
-                      id="table"
-                      name="table"
+                      id="tableNumber"
+                      name="tableNumber"
                       className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                       value={formData.tableNumber}
                       onChange={handleChange}
@@ -212,15 +253,15 @@ function EditReservation() {
                   </div>
                   <div>
                     <label
-                      htmlFor="people"
+                      htmlFor="numberOfPeople"
                       className="block text-sm font-medium text-gray-200 mb-2"
                     >
                       Personas
                     </label>
                     <input
                       type="number"
-                      id="people"
-                      name="people"
+                      id="numberOfPeople"
+                      name="numberOfPeople"
                       className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                       value={formData.numberOfPeople}
                       onChange={handleChange}
@@ -231,7 +272,7 @@ function EditReservation() {
                 {/* Código */}
                 <div>
                   <label
-                    htmlFor="text"
+                    htmlFor="code"
                     className="block text-sm font-medium text-gray-200 mb-2"
                   >
                     Código
@@ -240,6 +281,7 @@ function EditReservation() {
                     type="text"
                     readOnly
                     className="w-full rounded-xl bg-zinc-700 border border-zinc-600 p-3 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    id="code"
                     value={formData.code}
                   />
                 </div>
