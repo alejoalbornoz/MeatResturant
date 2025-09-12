@@ -22,14 +22,13 @@ export default function Dashboard() {
         const res = await fetch("http://localhost:8080/api/reservation/", {
           credentials: "include",
         });
-        const data = await res.json();
+          const data: Reservation[] = await res.json();
 
         // Adaptamos los datos al schema
         const mapped: Reservation[] = data.map((r) => ({
           ...r,
-          tableNumber: r.tableNumber.toString(),
+          tableNumber: r.tableNumber,
           date: r.date.split("T")[0],
-
           regenerateCode: "",
         }));
         setReservations(mapped);
@@ -43,7 +42,15 @@ export default function Dashboard() {
     fetchReservations();
   }, []);
 
-  if (loading) return <p>Cargando reservas...</p>;
+  if (loading) {
+  return (
+    <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      <span className="ml-4 text-lg font-semibold">Cargando reservas...</span>
+    </div>
+  );
+}
+
 
   return (
     <SidebarProvider

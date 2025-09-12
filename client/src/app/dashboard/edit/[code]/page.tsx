@@ -3,9 +3,10 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { showToast } from "nextjs-toast-notify";
+
 
 function EditReservation() {
   type FormData = {
@@ -21,6 +22,8 @@ function EditReservation() {
   };
 
   const { code } = useParams();
+  const router = useRouter();
+
   const [formData, setFormData] = useState<FormData>({
     name: "",
     surname: "",
@@ -101,6 +104,7 @@ function EditReservation() {
         icon: "",
         sound: false,
       });
+      router.push("/dashboard");
     } catch (err) {
       console.error(err);
       showToast.error("¡La operación se realizó con éxito!", {
@@ -125,7 +129,7 @@ function EditReservation() {
     }));
   };
 
-  if (loading) return <p className="text-white">Cargando...</p>;
+
 
   return (
     <div>
@@ -267,6 +271,24 @@ function EditReservation() {
                       onChange={handleChange}
                     />
                   </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="status"
+                    className="block text-sm font-medium text-gray-200 mb-2"
+                  >
+                    Estado
+                  </label>
+                  <select
+                    id="status"
+                    name="status"
+                    className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                    value={formData.status}
+                    onChange={handleChange}
+                  >
+                    <option value="active">Active</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
                 </div>
 
                 {/* Código */}

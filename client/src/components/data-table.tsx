@@ -315,6 +315,7 @@ export function DataTable({
     [data]
   );
 
+
   const table = useReactTable<z.infer<typeof schema>>({
     data,
     columns,
@@ -424,7 +425,7 @@ export function DataTable({
               Añadir Reserva
             </Link>
           </Button>
-           <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm">
             <IconSearch />
             <Link href="#" className="hidden lg:inline">
               Buscar Reserva

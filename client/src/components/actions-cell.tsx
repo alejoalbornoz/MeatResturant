@@ -11,13 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconDotsVertical } from "@tabler/icons-react";
 import Link from "next/link";
+import { showToast } from "nextjs-toast-notify";
 
 type ActionsCellProps = {
   code: string;
   onRemove: (code: string) => void; // function passed from DataTable
+  // onUpdateStatus: (code: string, status: string) => void;
 };
 
-export const ActionsCell: React.FC<ActionsCellProps> = ({ code, onRemove }) => {
+export const ActionsCell: React.FC<ActionsCellProps> = ({ code,  onRemove }) => {
   const handleCancel = async () => {
     try {
       const res = await fetch(
@@ -28,6 +30,16 @@ export const ActionsCell: React.FC<ActionsCellProps> = ({ code, onRemove }) => {
       if (!res.ok) throw new Error("Error al cancelar");
 
       toast.success("Reserva cancelada");
+      showToast.success("¡La operación se realizó con éxito!", {
+        duration: 4000,
+        progress: true,
+        position: "top-right",
+        transition: "popUp",
+        icon: "",
+        sound: false,
+      });
+
+      // onUpdateStatus(code, "cancelled");
     } catch (error) {
       toast.error("No se pudo cancelar la reserva");
       console.error(error);
