@@ -1,4 +1,3 @@
-// components/AvailableTables.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -17,28 +16,60 @@ export default function AvailableTables() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState<string>("");
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch("http://localhost:8080/api/reservation/freetables"); // ajustá la URL a tu ruta real
-        const data = await res.json();
-        setAvailability(data);
-        setSelectedDate(Object.keys(data)[0]); // arranca con el primer día
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+  // 🔹 Función para formatear fecha en el timezone local
+  const formatDateForDisplay = (dateString: string) => {
+    const date = new Date(dateString + 'T00:00:00'); // Asegurar que sea medianoche
+    return date.toLocaleDateString("es-AR", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+    });
+  };
+
+  // 🔹 función para traer los datos
+  const fetchData = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/reservation/freetables", {
+        cache: "no-store",
+      });
+      if (!res.ok) throw new Error("Error al cargar las mesas");
+      const data = await res.json();
+      setAvailability(data);
+
+      // Obtener la primera fecha disponible
+      const firstDate = Object.keys(data)[0];
+      if (!selectedDate || !data[selectedDate]) {
+        setSelectedDate(firstDate);
       }
-    };
+    } catch (err) {
+      console.error(err);
+      setAvailability(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 useEffect inicial + polling
+  useEffect(() => {
     fetchData();
+    const interval = setInterval(fetchData, 60_000); 
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
-    return <p className="text-center py-10 text-lg">Cargando mesas...</p>;
+    return (
+      <p className="text-center py-10 text-lg animate-pulse">
+        Cargando mesas disponibles…
+      </p>
+    );
   }
 
   if (!availability) {
-    return <p className="text-center py-10 text-red-500">Error cargando datos</p>;
+    return (
+      <p className="text-center py-10 text-red-500">
+        Error cargando datos de mesas
+      </p>
+    );
   }
 
   const dates = Object.keys(availability);
@@ -58,11 +89,7 @@ export default function AvailableTables() {
                   : "bg-muted text-muted-foreground hover:bg-primary/10"
               }`}
           >
-            {new Date(date).toLocaleDateString("es-AR", {
-              weekday: "short",
-              day: "2-digit",
-              month: "2-digit",
-            })}
+            {formatDateForDisplay(date)}
           </button>
         ))}
       </div>
@@ -77,7 +104,7 @@ export default function AvailableTables() {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(availability[selectedDate] || {}).map(
+            {availability[selectedDate] && Object.entries(availability[selectedDate]).map(
               ([time, { availableTables }]) => (
                 <tr key={time} className="border-t border-border">
                   <td className="px-4 py-2">{time}</td>

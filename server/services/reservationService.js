@@ -73,32 +73,32 @@ export async function getAvailable() {
   return { dates, times };
 }
 
+
+
+
+// utils/getAvailableTables.js
 export async function getAvailableTables(prisma) {
-  const TOTAL_TABLES = 16; // cantidad real de mesas
+  const TOTAL_TABLES = 16;
+
+  // Obtener fechas en UTC
   const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  
+  const endDate = new Date(today);
+  endDate.setUTCDate(today.getUTCDate() + 7);
 
-  // Generar próximos 7 días
-  const dates = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    return d.toISOString().split("T")[0];
-  });
-
-  // Generar horarios
   const times = [];
   for (let hour = 11; hour <= 23; hour++) {
     times.push(hour.toString().padStart(2, "0") + ":00");
   }
 
-  // Traer reservas activas en el rango
+  // Obtener reservas del rango de fechas
   const reservations = await prisma.reservation.findMany({
     where: {
       status: "active",
       date: {
-        gte: new Date(dates[0]),
-        lt: new Date(
-          new Date(dates[dates.length - 1]).getTime() + 24 * 60 * 60 * 1000
-        ),
+        gte: today,
+        lt: endDate
       },
     },
     select: {
@@ -108,26 +108,30 @@ export async function getAvailableTables(prisma) {
     },
   });
 
-  // Estructura final
   const availability = {};
 
-  for (const date of dates) {
-    availability[date] = {};
+  // Generar los próximos 7 días
+  for (let i = 0; i < 7; i++) {
+    const currentDate = new Date(today);
+    currentDate.setUTCDate(today.getUTCDate() + i);
+    const dateKey = currentDate.toISOString().split('T')[0];
+    
+    availability[dateKey] = {};
 
     for (const time of times) {
       const occupiedTables = reservations
-        .filter(
-          (r) => r.date.toISOString().split("T")[0] === date && r.time === time
-        )
+        .filter((r) => {
+          const reservationDate = r.date.toISOString().split('T')[0];
+          return reservationDate === dateKey && r.time === time;
+        })
         .map((r) => r.tableNumber);
 
-      const allTables = Array.from({ length: TOTAL_TABLES }, (_, i) => i + 1);
+      const availableTables = Array.from(
+        { length: TOTAL_TABLES }, 
+        (_, i) => i + 1
+      ).filter(table => !occupiedTables.includes(table));
 
-      const availableTables = allTables.filter(
-        (table) => !occupiedTables.includes(table)
-      );
-
-      availability[date][time] = {
+      availability[dateKey][time] = {
         occupiedTables,
         availableTables,
       };
@@ -136,6 +140,11 @@ export async function getAvailableTables(prisma) {
 
   return availability;
 }
+
+
+
+
+
 
 export async function checkAvailability(req, res) {
   const { date, time } = req.query;
