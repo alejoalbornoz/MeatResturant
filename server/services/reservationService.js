@@ -53,7 +53,7 @@ export async function createReservation(data) {
   });
 }
 
-export async function getAvailableTables() {
+export async function getAvailable() {
   const today = new Date();
 
   // Generar los próximos 7 días
@@ -73,6 +73,69 @@ export async function getAvailableTables() {
   return { dates, times };
 }
 
+export async function getAvailableTables(prisma) {
+  const TOTAL_TABLES = 16; // cantidad real de mesas
+  const today = new Date();
+
+  // Generar próximos 7 días
+  const dates = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    return d.toISOString().split("T")[0];
+  });
+
+  // Generar horarios
+  const times = [];
+  for (let hour = 11; hour <= 23; hour++) {
+    times.push(hour.toString().padStart(2, "0") + ":00");
+  }
+
+  // Traer reservas activas en el rango
+  const reservations = await prisma.reservation.findMany({
+    where: {
+      status: "active",
+      date: {
+        gte: new Date(dates[0]),
+        lt: new Date(
+          new Date(dates[dates.length - 1]).getTime() + 24 * 60 * 60 * 1000
+        ),
+      },
+    },
+    select: {
+      tableNumber: true,
+      date: true,
+      time: true,
+    },
+  });
+
+  // Estructura final
+  const availability = {};
+
+  for (const date of dates) {
+    availability[date] = {};
+
+    for (const time of times) {
+      const occupiedTables = reservations
+        .filter(
+          (r) => r.date.toISOString().split("T")[0] === date && r.time === time
+        )
+        .map((r) => r.tableNumber);
+
+      const allTables = Array.from({ length: TOTAL_TABLES }, (_, i) => i + 1);
+
+      const availableTables = allTables.filter(
+        (table) => !occupiedTables.includes(table)
+      );
+
+      availability[date][time] = {
+        occupiedTables,
+        availableTables,
+      };
+    }
+  }
+
+  return availability;
+}
 
 export async function checkAvailability(req, res) {
   const { date, time } = req.query;
@@ -125,4 +188,3 @@ export async function cancelReservation(code) {
 export async function getReservationByCode(code) {
   return prisma.reservation.findUnique({ where: { code } });
 }
-

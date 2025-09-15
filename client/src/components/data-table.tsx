@@ -21,21 +21,17 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  IconChevronDown,
+  
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled,
-  IconGripVertical,
-  IconLayoutColumns,
-  IconLoader,
+
   IconPlus,
   IconSearch,
   IconTrendingUp,
 } from "@tabler/icons-react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -50,11 +46,11 @@ import {
   VisibilityState,
 } from "@tanstack/react-table";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
-import { toast } from "sonner";
+
 import { z } from "zod";
 
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import {
   ChartConfig,
@@ -72,12 +68,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -98,9 +89,11 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
-import { ActionsCell } from "./actions-cell";
+import AvailableTables from "./AvailableTable";
+import { columns } from "./columns";
 
-type TableMeta = {
+
+export type TableMeta = {
   removeReservation: (code: string) => void;
 };
 
@@ -118,148 +111,8 @@ export const schema = z.object({
 });
 
 // Create a separate component for the drag handle
-function DragHandle({ id }: { id: number }) {
-  const { attributes, listeners } = useSortable({
-    id,
-  });
-
-  return (
-    <Button
-      {...attributes}
-      {...listeners}
-      variant="ghost"
-      size="icon"
-      className="text-muted-foreground size-7 hover:bg-transparent"
-    >
-      <IconGripVertical className="text-muted-foreground size-4" />
-      <span className="sr-only">Arrastrar orden</span>
-    </Button>
-  );
-}
 
 // 🔹 Columnas de la tabla
-export const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
-  {
-    id: "select",
-    header: () => <div className="flex items-center justify-center"></div>,
-    cell: () => <div className="flex items-center justify-center"></div>,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "name",
-    header: "Nombre y Apellido",
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
-  },
-  {
-    accessorKey: "date",
-    header: "Fecha y Hora",
-    cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.date} {row.original.time}
-        </Badge>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Estado",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-2 ">
-        {row.original.status === "active" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
-        {row.original.status}
-      </Badge>
-    ),
-  },
-  {
-    accessorKey: "tableNumber",
-    header: () => (
-      <div className="text-center min-w-[50px] transform -translate-x-7">
-        Mesa
-      </div>
-    ),
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.tableNumber}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Input
-          className="h-8 w-[50px] px-0 py-0 text-center border-transparent bg-transparent shadow-none
-             hover:bg-input/30 focus-visible:bg-background 
-             dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
-          defaultValue={row.original.tableNumber}
-          id={`${row.original.id}-table`}
-        />
-      </form>
-    ),
-  },
-  {
-    accessorKey: "numberOfPeople",
-    header: () => (
-      <div className="text-center transform ">Cantidad de personas</div>
-    ),
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.numberOfPeople}`,
-            success: "Done",
-            error: "Error",
-          });
-        }}
-      >
-        <Input
-          className="h-8 w-[120px] text-center border-transparent bg-transparent shadow-none translate-x-20
-                   hover:bg-input/30 focus-visible:bg-background 
-                   dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
-          defaultValue={row.original.numberOfPeople}
-          id={`${row.original.id}-people`}
-        />
-      </form>
-    ),
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: () => <div className="w-full text-center">Número de teléfono</div>,
-    cell: ({ row }) => (
-      <span className="text-center block">{row.original.phoneNumber}</span>
-    ),
-  },
-  {
-    accessorKey: "code",
-    header: "Código",
-    cell: ({ row }) => row.original.code,
-  },
-  {
-    id: "actions",
-    header: "Acciones",
-    cell: ({ row, table }) => (
-      <ActionsCell
-        code={row.original.code}
-        onRemove={(code: string) =>
-          (table.options.meta as TableMeta)?.removeReservation(code)
-        }
-      />
-    ),
-  },
-];
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -315,7 +168,6 @@ export function DataTable({
     [data]
   );
 
-
   const table = useReactTable<z.infer<typeof schema>>({
     data,
     columns,
@@ -366,6 +218,7 @@ export function DataTable({
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
+
         <Select defaultValue="outline">
           <SelectTrigger
             className="flex w-fit @4xl/main:hidden"
@@ -374,51 +227,19 @@ export function DataTable({
           >
             <SelectValue placeholder="Select a view" />
           </SelectTrigger>
+
           <SelectContent>
             <SelectItem value="outline">Reservas</SelectItem>
             <SelectItem value="past-performance">Mesas disponibles</SelectItem>
           </SelectContent>
         </Select>
+
         <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="outline">Reservas</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Mesas disponibles <Badge variant="secondary">3</Badge>
-          </TabsTrigger>
+          <TabsTrigger value="available-tables">Mesas disponibles</TabsTrigger>
         </TabsList>
+
         <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Personalizar columnas</span>
-                <span className="lg:hidden">Columnas</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
           <Button variant="outline" size="sm">
             <IconPlus />
             <Link href="/dashboard/create" className="hidden lg:inline">
@@ -566,20 +387,8 @@ export function DataTable({
           </div>
         </div>
       </TabsContent>
-      <TabsContent
-        value="past-performance"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent value="key-personnel" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
-      </TabsContent>
-      <TabsContent
-        value="focus-documents"
-        className="flex flex-col px-4 lg:px-6"
-      >
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed"></div>
+      <TabsContent value="available-tables" className="w-full px-4 lg:px-6">
+        <AvailableTables />
       </TabsContent>
     </Tabs>
   );
@@ -605,7 +414,11 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
+export default function TableCellViewer({
+  item,
+}: {
+  item: z.infer<typeof schema>;
+}) {
   const isMobile = useIsMobile();
 
   return (

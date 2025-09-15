@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import { useParams } from "next/navigation"; // <--- hook de params
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -18,28 +18,22 @@ type Reservation = {
   tableNumber?: number;
 };
 
-// Props que recibe la página
-type ReservationPageProps = {
-  params: {
-    code: string;
-  };
-};
+export default function ReservationPage() {
+  const params = useParams();
+  const code = params?.code;
 
-export default function ReservationPage({ params }: ReservationPageProps) {
   const [data, setData] = useState<Reservation | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!code) return;
+
     async function fetchData() {
       try {
-        const { code } = params;
-        const res = await fetch(
-          `http://localhost:8080/api/reservation/${code}`,
-          {
-            cache: "no-store",
-          }
-        );
+        const res = await fetch(`http://localhost:8080/api/reservation/${code}`, {
+          cache: "no-store",
+        });
         const json: Reservation = await res.json();
 
         if (!res.ok) throw new Error("No se encontró la reserva");
@@ -51,13 +45,13 @@ export default function ReservationPage({ params }: ReservationPageProps) {
         setLoading(false);
       }
     }
+
     fetchData();
-  }, [params]);
+  }, [code]);
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center ">
-        {/* Spinner grande */}
+      <div className="inset-0 flex flex-col items-center justify-center">
         <div className="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-indigo-600"></div>
         <p className="mt-6 text-2xl font-semibold text-gray-700">Cargando…</p>
       </div>
@@ -66,7 +60,7 @@ export default function ReservationPage({ params }: ReservationPageProps) {
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex flex-col items-center justify-center ">
+      <div className="fixed inset-0 flex flex-col items-center justify-center">
         <svg
           className="h-20 w-20 text-red-500 mb-6"
           fill="currentColor"

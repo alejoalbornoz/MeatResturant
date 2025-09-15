@@ -8,6 +8,7 @@ import {
   fetchAvailableTables,
   updateReservationController,
   fetchReservationStats,
+  availabilityController,
 } from "../controllers/reservationController.js";
 
 import { checkAvailability } from "../services/reservationService.js";
@@ -19,6 +20,7 @@ router.get("/", getAllReservations);
 
 router.get("/stats", fetchReservationStats);
 router.get("/availability", checkAvailability);
+router.get("/freetables", availabilityController);
 router.get("/tables", fetchAvailableTables);
 router.get("/:code", getReservation);
 

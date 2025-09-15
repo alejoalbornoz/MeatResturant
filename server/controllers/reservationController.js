@@ -3,6 +3,7 @@ import {
   cancelReservation as cancelReservationService,
   getReservationByCode,
   getAvailableTables,
+  getAvailable,
 } from "../services/reservationService.js";
 
 import {
@@ -11,6 +12,8 @@ import {
   updateReservation,
   getReservationStats,
 } from "../services/reservationAdmin.js";
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export async function createReservation(req, res) {
   try {
@@ -68,7 +71,7 @@ export async function deleteReservationController(req, res) {
 
 export const fetchAvailableTables = async (req, res) => {
   try {
-    const slots = await getAvailableTables();
+    const slots = await getAvailable();
     res.status(200).json(slots);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -125,5 +128,14 @@ export async function fetchReservationStats(req, res) {
     res
       .status(500)
       .json({ error: "Error al obtener estadísticas de reservas" });
+  }
+}
+
+export async function availabilityController(req, res) {
+  try {
+    const availability = await getAvailableTables(prisma);
+    res.json(availability);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 }
