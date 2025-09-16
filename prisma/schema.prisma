@@ -26,3 +26,24 @@ model Reservation {
   expiresAt   DateTime
   status      String   @default("active") // active | cancelled
 }
+
+
+
+model MenuItem {
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Int
+  imageUrl     String?
+  category     Category? @relation(fields: [categoryId], references: [id])
+  categoryId   Int?
+  available    Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  items    MenuItem[]
+}

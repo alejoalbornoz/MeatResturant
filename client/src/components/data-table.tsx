@@ -21,12 +21,10 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-
   IconPlus,
   IconSearch,
   IconTrendingUp,
@@ -88,10 +86,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
 import Link from "next/link";
 import AvailableTables from "./AvailableTable";
 import { columns } from "./columns";
-
+import { useRouter } from "next/navigation";
 
 export type TableMeta = {
   removeReservation: (code: string) => void;
@@ -168,6 +178,13 @@ export function DataTable({
     [data]
   );
 
+  const [date, setDate] = React.useState("");
+  const [time, setTime] = React.useState("");
+  const [occupiedTables, setOccupiedTables] = React.useState([]);
+  const [reservationCode, setReservationCode] = React.useState("");
+
+  const router = useRouter();
+
   const table = useReactTable<z.infer<typeof schema>>({
     data,
     columns,
@@ -209,6 +226,25 @@ export function DataTable({
     }
   }
 
+  const searchReservation = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/reservation/${reservationCode}`
+      );
+      const data = await res.json();
+      if (res.ok) {
+        console.log(
+          `Reservation found: Table ${data.tableNumber} Name: ${data.name} ${data.surname}, Date: ${data.date}, Time: ${data.time}`
+        );
+        router.push(`/dashboard/edit/${data.code}`);
+      } else {
+        console.log(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <Tabs
       defaultValue="outline"
@@ -246,12 +282,43 @@ export function DataTable({
               Añadir Reserva
             </Link>
           </Button>
-          <Button variant="outline" size="sm">
-            <IconSearch />
-            <Link href="#" className="hidden lg:inline">
-              Buscar Reserva
-            </Link>
-          </Button>
+
+          <Sheet>
+            
+            <SheetTrigger asChild>
+              
+              <Button variant="outline" className="cursor-pointer">
+                <IconSearch />
+                Buscar Reserva
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Buscar Reserva</SheetTitle>
+                <SheetDescription>
+                  Coloque el codigo de reserva
+                </SheetDescription>
+              </SheetHeader>
+              <div className="grid flex-1 auto-rows-min gap-6 px-4">
+                <div className="grid gap-3">
+                  <Label htmlFor="sheet-demo-name">Codigo</Label>
+                  <Input
+                    id="sheet-demo-name"
+                    onChange={(e) => setReservationCode(e.target.value)}
+                    value={reservationCode}
+                  />
+                </div>
+              </div>
+              <SheetFooter>
+                <Button type="submit" onClick={searchReservation}>
+                  Buscar
+                </Button>
+                <SheetClose asChild>
+                  <Button variant="outline">Cerrar</Button>
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
       <TabsContent
