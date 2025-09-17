@@ -73,17 +73,13 @@ export async function getAvailable() {
   return { dates, times };
 }
 
-
-
-
-// utils/getAvailableTables.js
 export async function getAvailableTables(prisma) {
   const TOTAL_TABLES = 16;
 
   // Obtener fechas en UTC
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
-  
+
   const endDate = new Date(today);
   endDate.setUTCDate(today.getUTCDate() + 7);
 
@@ -98,7 +94,7 @@ export async function getAvailableTables(prisma) {
       status: "active",
       date: {
         gte: today,
-        lt: endDate
+        lt: endDate,
       },
     },
     select: {
@@ -114,22 +110,22 @@ export async function getAvailableTables(prisma) {
   for (let i = 0; i < 7; i++) {
     const currentDate = new Date(today);
     currentDate.setUTCDate(today.getUTCDate() + i);
-    const dateKey = currentDate.toISOString().split('T')[0];
-    
+    const dateKey = currentDate.toISOString().split("T")[0];
+
     availability[dateKey] = {};
 
     for (const time of times) {
       const occupiedTables = reservations
         .filter((r) => {
-          const reservationDate = r.date.toISOString().split('T')[0];
+          const reservationDate = r.date.toISOString().split("T")[0];
           return reservationDate === dateKey && r.time === time;
         })
         .map((r) => r.tableNumber);
 
       const availableTables = Array.from(
-        { length: TOTAL_TABLES }, 
+        { length: TOTAL_TABLES },
         (_, i) => i + 1
-      ).filter(table => !occupiedTables.includes(table));
+      ).filter((table) => !occupiedTables.includes(table));
 
       availability[dateKey][time] = {
         occupiedTables,
@@ -140,11 +136,6 @@ export async function getAvailableTables(prisma) {
 
   return availability;
 }
-
-
-
-
-
 
 export async function checkAvailability(req, res) {
   const { date, time } = req.query;
@@ -165,10 +156,7 @@ export async function checkAvailability(req, res) {
   }
 }
 
-// Ajusta según tu path
-
 export async function cancelReservation(code) {
-  // Buscar la reserva por código
   const reservation = await prisma.reservation.findUnique({ where: { code } });
   if (!reservation) throw new Error("Reserva no encontrada");
 
