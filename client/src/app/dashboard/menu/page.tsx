@@ -5,12 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,12 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 
 interface Category {
   id: number;
@@ -140,7 +131,9 @@ export default function MenuDashboard() {
 
           <Card className="bg-neutral-900 border-neutral-800">
             <CardHeader>
-              <CardTitle className="text-xl">Administrar Menú</CardTitle>
+              <CardTitle className="text-xl">
+                Administrar Menú y Categproa
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="items" className="w-full">
@@ -165,7 +158,10 @@ export default function MenuDashboard() {
                         placeholder="Descripción"
                         value={newItem.description}
                         onChange={(e) =>
-                          setNewItem({ ...newItem, description: e.target.value })
+                          setNewItem({
+                            ...newItem,
+                            description: e.target.value,
+                          })
                         }
                         className="bg-neutral-800 text-neutral-100"
                       />
@@ -216,25 +212,39 @@ export default function MenuDashboard() {
                           <TableHead>Nombre</TableHead>
                           <TableHead>Precio</TableHead>
                           <TableHead>Categoria</TableHead>
-                          <TableHead className="text-right">Acción</TableHead>
+                          <TableHead className="text-right -translate-x-15">
+                            Acción
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {items.map((item) => (
-                          <TableRow key={item.id} className="hover:bg-neutral-800">
+                          <TableRow
+                            key={item.id}
+                            className="hover:bg-neutral-800"
+                          >
                             <TableCell>{item.name}</TableCell>
                             <TableCell>${item.price}</TableCell>
                             <TableCell>
                               {item.category?.name || "No category"}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell className="text-right gap-5 flex justify-end">
+                              <Link href={`/dashboard/menu/${item.id}`}>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="cursor-pointer"
+                                >
+                                  Editar
+                                </Button>
+                              </Link>
                               <Button
                                 onClick={() => deleteItem(item.id)}
                                 variant="destructive"
                                 size="sm"
                                 className="cursor-pointer"
                               >
-                                Delete
+                                Eliminar
                               </Button>
                             </TableCell>
                           </TableRow>
