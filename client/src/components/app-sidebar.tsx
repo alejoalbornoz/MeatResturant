@@ -32,12 +32,12 @@ const data = {
   navMain: [
     {
       title: "Reserva",
-      url: "#",
+      url: "/dashboard",
       icon: IconListDetails,
     },
     {
       title: "Menu",
-      url: "#",
+      url: "/dashboard/menu",
       icon: IconChartBar,
     },
     {
