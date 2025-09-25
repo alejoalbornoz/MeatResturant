@@ -6,7 +6,11 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { showToast } from "nextjs-toast-notify";
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function EditReservation() {
   type FormData = {
@@ -62,7 +66,6 @@ function EditReservation() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // 🔹 Creamos un payload limpio solo con los campos que el backend acepta
     const payload = {
       name: formData.name,
       surname: formData.surname,
@@ -72,7 +75,7 @@ function EditReservation() {
       date: new Date(formData.date),
       time: formData.time,
       status: formData.status,
-      regenerateCode: false, // o true si quieres regenerar el código
+      regenerateCode: false,
     };
 
     console.log("Payload final enviado al backend:", payload);
@@ -118,18 +121,28 @@ function EditReservation() {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? Number(value) : value,
     }));
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-white">Cargando...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -138,186 +151,153 @@ function EditReservation() {
         <SidebarInset>
           <SiteHeader />
           <div className="container p-4 mx-auto mt-10">
-            <h1 className="flex justify-center items-center text-3xl font-bold text-white mb-8">
-              Editar Reservas
-            </h1>
+            <div className="flex flex-col space-y-6">
+              <div className="text-center">
+                <h1 className="text-3xl font-bold text-white">Editar Reserva</h1>
+                <p className="text-gray-400 mt-2">Modifica los datos de la reserva</p>
+              </div>
 
-            <div className="bg-zinc-800 w-full max-w-3xl mx-auto p-8 rounded-3xl shadow-lg">
-              <form className="space-y-6" onSubmit={handleSubmit}>
-                {/* Nombre */}
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-200 mb-2"
-                  >
-                    Nombre
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Ingrese el nombre"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                </div>
+              <Card className="w-full max-w-3xl mx-auto">
+                <CardHeader>
+                  <CardTitle>Información de la Reserva</CardTitle>
+                  <CardDescription>
+                    Actualiza los detalles de la reserva a continuación
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form className="space-y-6" onSubmit={handleSubmit}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Nombre */}
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Nombre</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder="Ingrese el nombre"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
 
-                {/* Apellido */}
-                <div>
-                  <label
-                    htmlFor="surname"
-                    className="block text-sm font-medium text-gray-200 mb-2"
-                  >
-                    Apellido
-                  </label>
-                  <input
-                    type="text"
-                    id="surname"
-                    name="surname"
-                    className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Ingrese el apellido"
-                    value={formData.surname}
-                    onChange={handleChange}
-                  />
-                </div>
+                      {/* Apellido */}
+                      <div className="space-y-2">
+                        <Label htmlFor="surname">Apellido</Label>
+                        <Input
+                          id="surname"
+                          name="surname"
+                          placeholder="Ingrese el apellido"
+                          value={formData.surname}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
 
-                {/* Celular */}
-                <div>
-                  <label
-                    htmlFor="phoneNumber"
-                    className="block text-sm font-medium text-gray-200 mb-2"
-                  >
-                    Celular
-                  </label>
-                  <input
-                    type="text"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Ingrese el número de celular"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                  />
-                </div>
+                    {/* Celular */}
+                    <div className="space-y-2">
+                      <Label htmlFor="phoneNumber">Celular</Label>
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        placeholder="Ingrese el número de celular"
+                        value={formData.phoneNumber}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
 
-                {/* Fecha y Hora */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="date"
-                      className="block text-sm font-medium text-gray-200 mb-2"
-                    >
-                      Fecha
-                    </label>
-                    <input
-                      type="date"
-                      id="date"
-                      name="date"
-                      className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                      value={formData.date}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="time"
-                      className="block text-sm font-medium text-gray-200 mb-2"
-                    >
-                      Hora
-                    </label>
-                    <input
-                      type="time"
-                      id="time"
-                      name="time"
-                      className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                      value={formData.time}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
+                    {/* Fecha y Hora */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="date">Fecha</Label>
+                        <Input
+                          type="date"
+                          id="date"
+                          name="date"
+                          value={formData.date}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="time">Hora</Label>
+                        <Input
+                          type="time"
+                          id="time"
+                          name="time"
+                          value={formData.time}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
 
-                {/* Mesa y Personas */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label
-                      htmlFor="tableNumber"
-                      className="block text-sm font-medium text-gray-200 mb-2"
-                    >
-                      Mesa
-                    </label>
-                    <input
-                      type="number"
-                      id="tableNumber"
-                      name="tableNumber"
-                      className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                      value={formData.tableNumber}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="numberOfPeople"
-                      className="block text-sm font-medium text-gray-200 mb-2"
-                    >
-                      Personas
-                    </label>
-                    <input
-                      type="number"
-                      id="numberOfPeople"
-                      name="numberOfPeople"
-                      className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                      value={formData.numberOfPeople}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="status"
-                    className="block text-sm font-medium text-gray-200 mb-2"
-                  >
-                    Estado
-                  </label>
-                  <select
-                    id="status"
-                    name="status"
-                    className="w-full rounded-xl bg-zinc-900 border border-zinc-700 p-3 text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    value={formData.status}
-                    onChange={handleChange}
-                  >
-                    <option value="active">Active</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </div>
+                    {/* Mesa y Personas */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <Label htmlFor="tableNumber">Número de Mesa</Label>
+                        <Input
+                          type="number"
+                          id="tableNumber"
+                          name="tableNumber"
+                          value={formData.tableNumber}
+                          onChange={handleInputChange}
+                          min="1"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="numberOfPeople">Número de Personas</Label>
+                        <Input
+                          type="number"
+                          id="numberOfPeople"
+                          name="numberOfPeople"
+                          value={formData.numberOfPeople}
+                          onChange={handleInputChange}
+                          min="1"
+                          required
+                        />
+                      </div>
+                    </div>
 
-                {/* Código */}
-                <div>
-                  <label
-                    htmlFor="code"
-                    className="block text-sm font-medium text-gray-200 mb-2"
-                  >
-                    Código
-                  </label>
-                  <input
-                    type="text"
-                    readOnly
-                    className="w-full rounded-xl bg-zinc-700 border border-zinc-600 p-3 text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    id="code"
-                    value={formData.code}
-                  />
-                </div>
+                    {/* Estado */}
+                    <div className="space-y-2">
+                      <Label htmlFor="status">Estado</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) => handleSelectChange("status", value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona un estado" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Activa</SelectItem>
+                          <SelectItem value="cancelled">Cancelada</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {/* Botón */}
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="px-6 py-3 rounded-xl bg-indigo-600 cursor-pointer hover:bg-indigo-700 text-white font-medium transition"
-                  >
-                    Guardar cambios
-                  </button>
-                </div>
-              </form>
+                    {/* Código (solo lectura) */}
+                    <div className="space-y-2">
+                      <Label htmlFor="code">Código de Reserva</Label>
+                      <Input
+                        id="code"
+                        value={formData.code}
+                        readOnly
+                        className="bg-muted text-muted-foreground"
+                      />
+                    </div>
+
+                    {/* Botón */}
+                    <div className="flex justify-end pt-4">
+                      <Button type="submit" className="min-w-[150px]">
+                        Guardar Cambios
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </SidebarInset>

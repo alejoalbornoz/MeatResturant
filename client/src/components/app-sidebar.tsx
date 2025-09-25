@@ -40,11 +40,6 @@ const data = {
       url: "/dashboard/menu",
       icon: IconChartBar,
     },
-    {
-      title: "Contacto",
-      url: "#",
-      icon: IconFolder,
-    },
   ],
   navClouds: [
     {
