@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { X, Eye } from "lucide-react";
 
 interface Category {
   id: number;
@@ -39,6 +40,7 @@ export default function EditMenuItemPage() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -212,27 +214,43 @@ export default function EditMenuItemPage() {
                 Imagen
               </Label>
 
-              {/* Preview de la imagen usando el componente Image de Next.js */}
+              {/* Preview de la imagen mejorado */}
               {imagePreview && (
-                <div className="mb-3">
-                  <div className="relative w-full h-32 rounded-md border border-neutral-700 overflow-hidden">
-                    <Image
-                      src={imagePreview}
-                      alt="Preview"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
+                <div className="mb-3 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="relative w-20 h-20 rounded-md border border-neutral-700 overflow-hidden">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsPreviewOpen(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <Eye className="w-4 h-4" />
+                        Vista Previa
+                      </Button>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={removeImage}
+                        className="text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
+                      >
+                        Eliminar
+                      </Button>
+                    </div>
                   </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={removeImage}
-                    className="mt-2 text-red-400 border-red-400 hover:bg-red-400 hover:text-white"
-                  >
-                    Eliminar Imagen
-                  </Button>
                 </div>
               )}
 
@@ -311,6 +329,49 @@ export default function EditMenuItemPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modal de Preview Personalizado */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <div className="bg-neutral-900 rounded-lg border border-neutral-800 max-w-3xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-800">
+              <h3 className="text-lg font-semibold">
+                Vista Previa de la Imagen
+              </h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsPreviewOpen(false)}
+                className="h-8 w-8"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+
+            <div className="p-6 flex justify-center items-center max-h-[70vh] overflow-auto">
+              <div className="relative w-full h-96 rounded-lg overflow-hidden">
+                <Image
+                  src={imagePreview}
+                  alt="Vista previa completa"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 60vw"
+                />
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-neutral-800 text-center text-sm text-neutral-400">
+              <p>Imagen: {item.name}</p>
+              <p>
+                Tamaño:{" "}
+                {imageFile
+                  ? `${(imageFile.size / 1024 / 1024).toFixed(2)} MB`
+                  : "Desde URL"}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
