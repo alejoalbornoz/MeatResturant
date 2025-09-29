@@ -48,7 +48,6 @@ export default function MenuPage() {
     {}
   );
 
-
   return (
     <div className="bg-[#070608] min-h-screen text-white">
       {/* Hero */}
@@ -67,7 +66,7 @@ export default function MenuPage() {
               {categoryName}
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <div
                   key={item.id}
                   className="bg-black/40 rounded-2xl overflow-hidden shadow-lg hover:scale-105 transition"
@@ -77,9 +76,10 @@ export default function MenuPage() {
                       src={item.imageUrl}
                       alt={item.name}
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
                       className="object-cover"
+                      priority={index < 6} // Prioriza las primeras 6 imágenes
                     />
-                    <p>Image</p>
                   </div>
                   <div className="p-4">
                     <h3 className="text-xl font-bold">{item.name}</h3>
