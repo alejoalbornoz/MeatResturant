@@ -59,7 +59,7 @@ export default function MenuPage() {
       </div>
 
       {/* Secciones del menú */}
-      <div className="max-w-6xl mx-auto px-6 space-y-16">
+      <div className="max-w-6xl  mx-auto px-6 space-y-16">
         {Object.entries(groupedMenu).map(([categoryName, items]) => (
           <div key={categoryName}>
             <h2 className="text-3xl font-semibold text-red-500 mb-6">

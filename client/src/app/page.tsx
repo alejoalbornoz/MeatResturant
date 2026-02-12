@@ -19,14 +19,14 @@ export default function Home() {
           priority
           sizes="100vw"
         />
-
+       
         {/* Overlay negro con opacidad */}
         <div className="absolute inset-0 bg-black/40 z-10"></div>
         {/* Difuminado */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/100 via-black/40 to-transparent z-10"></div>
 
         <div className="absolute inset-0 flex justify-center items-center z-20">
-          <div className="flex flex-col items-center w-full max-w-4xl px-4">
+          <div className="flex flex-col items-center w-full max-w-4xl px-4 text-center">
             <div className="relative w-full max-w-[750px] h-[700px]">
               <Image
                 src="/logodon3.png"
@@ -48,7 +48,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="relative h-[170vh]">
+      <div className="relative py-20">
         <div className="container mx-auto mt-20 flex flex-col lg:flex-row items-center px-4">
           <div className="relative w-full lg:w-[800px] h-[400px]">
             <Image

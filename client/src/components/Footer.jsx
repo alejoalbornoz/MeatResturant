@@ -4,7 +4,7 @@ import { MapPin, Clock } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-[#070608] text-white border-t border-white/10">
+    <footer className="bg-[#070608] text-white border-t border-white/10 ">
       <div className="max-w-6xl mx-auto px-6 py-14 grid gap-10 md:grid-cols-4">
         {/* Brand */}
         <div className="space-y-4">
