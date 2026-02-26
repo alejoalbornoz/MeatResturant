@@ -80,7 +80,7 @@ export default function ContactPage() {
           <ul className="space-y-4 text-gray-300 mb-10">
             <li className="flex items-center gap-3">
               <span>📞</span>
-              <span>Teléfono: +54 11 4567 8910</span>
+              <span>Teléfono: +54 11 0000 0000</span>
             </li>
             <li className="flex items-center gap-3">
               <span>⏰</span>
@@ -209,7 +209,7 @@ export default function ContactPage() {
       <div className="mt-12 text-center text-gray-400">
         <p>¿Prefieres contactarnos directamente?</p>
         <p className="mt-2">
-          Llamanos al <span className="text-red-500">+54 11 0000000</span> o
+          Llamanos al <span className="text-red-500">+54 11 0000 0000</span> o
           visitanos en nuestro local.
         </p>
       </div>
